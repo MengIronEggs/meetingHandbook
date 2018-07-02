@@ -1,0 +1,57 @@
+<template>
+    <div class="page">
+        <div class="device">
+             <el-input placeholder="" :disabled="true" v-model="searchVal">
+                <el-button  slot="append" icon="el-icon-search"></el-button>
+             </el-input>
+             <el-carousel trigger="click" height="207px" class="carousel">
+                  <el-carousel-item v-for="item in carouselArray" :key="item.order">
+                      <!--<router-link :to="item.linkUrl">-->
+                          <img class="carousel-image" :src="item.imageUrl">
+                      <!--</router-link>-->
+                  </el-carousel-item>
+              </el-carousel>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      searchVal: "",
+      mid: this.$route.query.mid,
+    };
+  },
+  methods: {},
+  mounted() {},
+  computed: {
+    carouselArray() {
+      return this.$store.state.attribute.carouselArray;
+    }
+  }
+};
+</script>
+
+<style scoped>
+.page {
+  display: flex;
+  flex-grow: 1;
+  padding: 0 10px;
+}
+.device {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  border: 1px solid #333;
+  width: 375px;
+  height: 820px;
+  margin: 0 auto;
+}
+.carousel {
+  border: 1px solid #ccc;
+}
+.carousel-image {
+  width: 100%;
+}
+</style>

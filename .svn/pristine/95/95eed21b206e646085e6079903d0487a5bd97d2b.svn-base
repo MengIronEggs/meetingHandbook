@@ -1,0 +1,26 @@
+<template>
+   <div class="AdministrationEdit">
+       <!-- 行政内容管理编辑 -->
+
+
+   </div>
+</template>
+
+<script>
+   export default {
+       data() {
+           return {
+
+           }
+
+       },
+       components: {
+
+       }
+   }
+</script>
+
+<style scoped lang="less">
+
+
+</style>

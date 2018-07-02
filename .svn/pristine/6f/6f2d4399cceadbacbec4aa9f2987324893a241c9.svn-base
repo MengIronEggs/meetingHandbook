@@ -1,0 +1,35 @@
+<template>
+    <div>
+        <div style="margin: 20px;display:flex;">
+            <div style="width:40%;">
+                <el-input v-model="form.name" placeholder="请输入标题"></el-input>
+            </div>
+            <div class="container">
+                
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    data(){
+        return{
+            form:{
+                name:'' ,
+            }
+        }
+    }
+}
+</script>
+
+<style scoped>
+.container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+</style>

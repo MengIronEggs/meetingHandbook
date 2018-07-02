@@ -1,0 +1,134 @@
+<template>
+    <div>
+        <div style="margin: 20px;display:flex;">
+            <div style="width:40%;">
+                <el-input v-model="form.name"  placeholder="请输入标题"></el-input>
+            </div>
+        </div>
+        <div class="container">
+            <mStructure/>
+            <mAttribute/>
+        </div>
+        <footer class="footer">
+            <el-button type="success" @click="previewDialogVisible = true">预览</el-button>
+            <el-button type="primary" @click="submit" :disabled="!form.name">保存</el-button>
+            <el-button type="info" @click="goback">返回</el-button>
+        </footer>
+        <!--预览提示框-->
+        <preview :previewDialogVisible="previewDialogVisible" :url="previewUrl" @close="previewDialogVisible = false" />
+    </div>
+</template>
+
+<script>
+import mStructure from "../../components/manageCompoent/mStructure";
+import mAttribute from "../../components/manageCompoent/mAttribute";
+import preview from "../../components/Preview";
+export default {
+  components: {
+    mStructure,
+    mAttribute,
+    preview
+  },
+  data() {
+    return {
+      form: {
+        name: ""
+      },
+      mid: this.$route.query.mid,
+      previewDialogVisible: false,
+        previewUrl: `#/?id=${this.$route.query.mid}&uid=${this.$getSession(
+        this.KEYS.USER_ID
+      )}`,
+      // 默认的死数据
+      obj: { DataVal: "新增", icon: "http://img.guoanfamily.com/plusIcoc.png" },
+      objTitle: "新增标题",
+      objArr: {
+        DataTitle: "新增标题",
+        DataList: [
+          { DataVal: "新增", icon: "http://img.guoanfamily.com/plusIcoc.png" }
+        ]
+      },
+      DataArr: [{DataTitle: "测试1",
+          DataList: [{
+              DataVal: "标签一", icon: "http://img.guoanfamily.com/handbook/6/1523518163711535500.jpg"
+            },
+            {
+              DataVal: "标签一",
+              icon:"http://img.guoanfamily.com/handbook/6/1523518163711535500.jpg"
+            },
+            {
+               DataVal: "标签二",icon:"http://img.guoanfamily.com/handbook/6/1523518163711535500.jpg"
+            }
+          ]
+        },
+        {
+          DataTitle: "测试2",
+          DataList: [ {
+              DataVal: "标签四",icon:"http://img.guoanfamily.com/handbook/6/1523518163711535500.jpg"
+            },
+            {
+              DataVal: "标签五",icon:"http://img.guoanfamily.com/handbook/6/1523518163711535500.jpg"
+            }
+          ]
+        }
+      ]
+    };
+  },
+  methods: {
+     submit() {},
+     goback() {
+      this.$showConfirm("确定已保存数据，以免数据丢失", () => {
+        this.$router.back();
+      });
+    }
+  },
+  created() {
+    // 默认页面加载，清空vuex里面轮播数据
+    this.$store.commit("initCarouselArray", {
+      carouselArray: []
+    });
+    // 默认页面加载，清空管理列表数据
+    this.$store.commit("managementList", {
+      managementArr: []
+    });
+    this.$get(`HandBookbyId?id=${this.mid}`).then(({ Code, Msg, Data }) => {
+      this.form.name = Data.Hbname;
+      if (Data.Fpjson) {
+        let newArr = JSON.parse(Data.Fpjson);
+        let carouselArray = newArr.carouselArray;
+        // 获取到的轮播图图片，添加到vuex
+        this.$store.commit("initCarouselArray", {
+          carouselArray
+        });
+        // 赋值默认提示添加图片
+        for (let i = 0; i < this.DataArr.length; i++) {
+          this.DataArr[i].DataList.push(this.obj);
+        }
+        this.DataArr.push(this.objArr);
+        let managementArr = this.DataArr;
+        // 获取到的列表的数据，添加到vuex
+        this.$store.commit("managementList", {
+          managementArr
+        });
+      }
+    });
+  },
+  mounted() {}
+};
+</script>
+
+<style scoped>
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.footer {
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+}
+</style>

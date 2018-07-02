@@ -1,0 +1,224 @@
+<template>
+     <div class="page">
+        <h4>属性区</h4>
+        <div v-if="!formType">
+            <el-card class="box-card">
+                <el-alert
+                    title="请选择编辑区域..."
+                    type="info"
+                    show-icon
+                    :closable="false"
+                >
+                </el-alert>
+            </el-card>
+        </div>
+        <!--轮播图属性-->
+            <div v-if="formType === 'carousel'">
+                <el-card class="box-card" v-for="(item, index) in carouselArray" :key="index">
+                    <el-form label-width="80px" class="carousel-item">
+                        <el-form-item label="图片">
+                            <el-upload
+                                class="avatar-uploader"
+                                :action="UPLOAD_IMAGE"
+                                :data="{pid: mid}"
+                                :show-file-list="false"
+                                :on-success="(...arr)=>{
+                                    handleAvatarSuccess(index, ...arr);
+                                }"
+                            >
+                                <img v-if="item.imageUrl" :src="item.imageUrl" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </el-form-item>
+
+                        <el-form-item label="跳转地址">
+                            <el-input v-model="carouselArray[index].linkUrl" placeholder="请输入跳转链接"></el-input>
+                        </el-form-item>
+                        <!-- 删除图片按钮 -->
+                        <el-button class="btn-remove" type="danger" icon="el-icon-delete" circle
+                            @click="removeCarouselItem(index)"></el-button>
+                    </el-form>
+                </el-card>
+                <!-- 轮播底部增加图片按钮 -->
+                <div class="carousel-bottom">
+                    <el-button class="btn-add" type="primary" icon="el-icon-plus" circle
+                               @click="addCarouselItem"></el-button>
+                </div>
+            </div>
+            <!-- 属性区 -->
+            <div v-if="formType === 'manage'">
+                <el-card class="box-card">
+                    <el-form label-width="80px">
+                        <el-form-item label="图片">
+                            <el-upload
+                                class="avatar-uploader"
+                                :action="UPLOAD_IMAGE"
+                                :data="{pid: mid}"
+                                :show-file-list="false"
+                                :on-success="handleEntrySuccess"
+                            >
+                                <img v-if="manageMent.icon" :src="manageMent.icon" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                            <el-button class="btn-remove" type="danger" icon="el-icon-delete" circle
+                                   ></el-button>
+                        </el-form-item>
+                        <el-form-item label="标签名称">
+                            <el-input v-model="manageMent.DataVal" placeholder="请输入名称"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="类型">
+                            <el-select v-model="manageMent.DataVal" placeholder="请选择" >
+                                <el-option-group
+                                    v-for="group in entryOptions"
+                                    :key="group.label"
+                                    :label="group.label">
+                                    <el-option
+                                        v-for="item in group.options"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-option-group>
+                            </el-select>
+                        </el-form-item>
+
+                        <!--外部链接-->
+                        <template v-if="manageMent.type === 'link'">
+                            <el-form-item label="链接地址">
+                                <el-input v-model="manageMent.href" placeholder="请输入链接"></el-input>
+                            </el-form-item>
+                        </template>
+                    </el-form>
+                </el-card>
+            </div>
+     </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+        mid: this.$route.query.mid,
+        entryOptions: [
+        {
+          label: "基础类型",
+          options: [
+            {
+              value: "article",
+              label: "内部文章"
+            },
+            {
+              value: "link",
+              label: "外部链接"
+            }
+          ]
+        },
+        {
+          label: "特殊类型",
+          options: [
+            {
+              value: "map",
+              label: "地图"
+            },
+            {
+              value: "weather",
+              label: "天气预报"
+            },
+            {
+              value: "file",
+              label: "文件"
+            },
+            {
+              value: "trip",
+              label: "行程"
+            },
+            {
+              value: "sign",
+              label: "签到"
+            },
+            {
+              value: "seat",
+              label: "座位表"
+            }
+          ]
+        }
+      ]
+    };
+  },
+  methods: {
+      handleAvatarSuccess(index, res, file) {
+      this.carouselArray[index].imageUrl = res.Data.link;
+    },
+     handleEntrySuccess(res, file) {
+      this.manageMent.icon = res.Data.link;
+    },
+     /*轮播图控制*/
+    addCarouselItem() {
+      this.carouselArray.push({
+        imageUrl: "",
+        linkUrl: ""
+      });
+    },
+    // 移除轮播图的图片
+    removeCarouselItem(index) {
+      this.carouselArray.splice(index, 1);
+      this.$emit("refreshLis");
+    },
+  },
+  created() {},
+  mounted() {},
+  computed: {
+    formType() {
+      return this.$store.state.attribute.objectType;
+    },
+    // 获取轮播图的数据
+    carouselArray() {
+      return this.$store.state.attribute.carouselArray;
+    },
+    // 获取列表的数据
+    manageMent(){
+        return this.$store.state.attribute.managementArr[this.$store.state.attribute.choosManIndex].DataList[this.$store.state.attribute.chooseLableIndex];
+    }
+  }
+};
+</script>
+
+<style scoped lang= 'less'>
+.page {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 20px;
+  max-width: 600px;
+  width: 100%;
+  min-width: 350px;
+  text-align: center;
+}
+.box-card {
+  margin: 10px;
+}
+.carousel-item {
+  position: relative;
+  padding-right: 100px;
+}
+
+.carousel-bottom {
+  margin: 40px 0;
+}
+
+.avatar {
+  display: inline-block;
+  height: 100px;
+}
+.btn-remove {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  color: #fff;
+  transform: translate(0%, -50%);
+}
+.carousel-bottom {
+  margin: 40px 0;
+}
+</style>

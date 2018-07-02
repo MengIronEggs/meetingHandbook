@@ -1,0 +1,53 @@
+<template>
+    <div>
+        <div style="margin: 20px;display:flex;">
+            <div style="width:40%;">
+                <el-input v-model="form.name"  placeholder="请输入标题"></el-input>
+            </div>
+        </div>
+        <div class="container">
+            <mStructure/>
+        </div>
+    </div>
+</template>
+
+<script>
+import mStructure from "../../components/manageCompoent/mStructure";
+export default {
+  components: {
+    mStructure
+  },
+  data() {
+    return {
+      form: {
+        name: "",
+      },
+      mid: this.$route.query.mid,
+    };
+  },
+  methods: {},
+  created() {
+    // 默认页面加载，清空vuex里面轮播数据
+    this.$store.commit("initCarouselArray", {
+      carouselArray: []
+    });
+    console.log(this)
+    this.$get(`HandBookbyId?id=${this.mid}`).then(({ Code, Msg, Data }) => {
+      let { Fpjson, Hbname } = Data;
+      console.log("===========", Data);
+    });
+  },
+  mounted() {}
+};
+</script>
+
+<style scoped>
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+</style>

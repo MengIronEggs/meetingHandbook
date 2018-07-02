@@ -1,0 +1,253 @@
+<template>
+    <div class="AdministrationEdit">
+        <!-- 行政内容管理编辑 -->
+        <div class="bread">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item v-for="(item,index) in breadArr" :key="index" :to="{path:item.path}">{{item.name}}</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+
+        <div class="content">
+            <!-- 操作区 -->
+            <div class="button_Box">
+                 <el-button type="primary" @click="AddData">添加</el-button>
+                 <el-button type="primary" :disabled="SelectionChangeArr.length!=1" @click="EditData">编辑</el-button>
+                 <el-button type="primary">删除</el-button>
+                 <el-button type="primary" @click="PushUp">批量导入</el-button>
+                 <el-button type="primary">批量导出</el-button>
+                <el-input
+                    class="SearchInput"
+                    placeholder="请输入内容"
+
+                    v-model="lookUpInfo">
+                    <el-button slot="append" icon="el-icon-search"></el-button>
+                </el-input>
+            </div>
+            <!-- 表格 -->
+            <div class="tables">
+                <template>
+                    <el-table
+                        :data="tableData"
+                        border
+                         @selection-change="SelectionChange"
+                        style="width: 100%">
+                        <el-table-column
+                            type="selection"
+                            align="center"
+                            width="55">
+                        </el-table-column>
+                        <el-table-column
+                            fixed
+                            prop="name"
+                            label="名称"
+                            align="center">
+                        </el-table-column>
+                        <el-table-column
+                            prop="Type"
+                            align="center"
+                            label="类型">
+                        </el-table-column>
+                        <el-table-column
+                            prop="date"
+                            align="center"
+                            label="日期">
+                        </el-table-column>
+                        <el-table-column
+                            prop="downNum"
+                            label="下载量"
+                            align="center">
+                        </el-table-column>
+                        <el-table-column
+                            label="星级"
+                            width="180"
+                            align="center">
+                            <template slot-scope="scope">
+                                <el-rate
+                                    v-model="scope.row.score"
+                                    disabled
+                                    show-score
+                                    text-color="#ff9900"
+                                    score-template="{value}">
+                                </el-rate>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="header"
+                            label="负责人"
+                            align="center">
+                        </el-table-column>
+                        <el-table-column
+                        width="180"
+                            label="操作"
+                            align="center">
+                            <template slot-scope="scope">
+                                <el-button type="primary" @click="EditLineData" size="mini">编辑</el-button>
+                                <el-button type="primary" size="mini">删除</el-button>
+                            </template>
+
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <div class="block pag_ination">
+                    <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="10"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="100">
+                    </el-pagination>
+                </div>
+
+            </div>
+
+            <!-- 弹窗 -->
+            <el-dialog :title="titleName" v-if="dialogVisible" :visible.sync="dialogVisible" >
+                <!-- 批量上传 -->
+                <div v-show="titleName=='批量上传'" class="BatchUpload">
+                    <el-upload
+                        class="upload-demo"
+                        drag
+                        action="https://jsonplaceholder.typicode.com/posts/"
+                        :multiple="true"
+                        :on-preview="previewList"
+                        :file-list="fileList"
+                        >
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    </el-upload>
+                </div>
+                <div v-show="titleName=='添加'||this.titleName=='编辑'" class="formEdit">
+                    <el-form ref="formDialog" :model="formEdit" label-width="100px">
+                        <el-form-item label="名称：">
+                            <el-input v-model="formEdit.name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="类型：">
+                            <el-input v-model="formEdit.type"></el-input>
+                        </el-form-item>
+                        <el-form-item label="日期：">
+                            <el-date-picker
+                                v-model="formEdit.Date"
+                                type="date"
+                                style="width:100%"
+                                placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
+                         <el-form-item label="负责人：">
+                            <el-input v-model="formEdit.responsibler"></el-input>
+                        </el-form-item>
+
+                    </el-form>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                </div>
+            </el-dialog>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                breadArr:[{ path: '/',name:"首页" },{ path: '/AdministrationEdit' ,name:"内容管理"}],
+                lookUpInfo:"",
+                tableData:[{
+                    date: '2016-05-03',
+                    name: '测试表格',
+                    Type: '文件',
+                    downNum: '12',
+                    score: 3.7,
+                    header: "王小二"
+                }],
+                SelectionChangeArr:[],
+                formEdit:{
+                    name:"",
+                    responsibler:"",
+                    type:"",
+                    Date:""
+                },
+                fileList:[{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],//上传文件列表
+                currentPage:1,
+                dialogVisible:false,
+                titleName:"",
+            }
+        },
+        methods:{
+            handleSizeChange(val){
+
+            },
+            handleCurrentChange(val){
+
+            },
+            SelectionChange(val){
+                this.SelectionChangeArr = val
+            },
+            // 批量上传
+            PushUp(){
+                this.titleName="批量上传";
+
+                this.dialogVisible = true;
+            },
+            previewList(file){
+                console.log(file)
+            },
+            AddData(){
+                this.titleName="添加";
+
+                this.dialogVisible = true;
+            },
+            // 大编辑按钮
+            EditData(){
+                this.titleName="编辑";
+                this.dialogVisible = true;
+            },
+            // 小编辑按钮
+            EditLineData(){
+                this.titleName="编辑";
+                this.dialogVisible = true;
+            }
+
+        },
+        components: {
+
+        }
+    }
+</script>
+
+<style scoped lang="less">
+    .AdministrationEdit{
+        position: relative;
+        height: 100%;
+        overflow: auto;
+        padding-top: 30px;
+    }
+    .bread{
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 30px;
+        width: 100%;
+    }
+    .button_Box{
+        padding: 10px ;
+        .SearchInput{
+            width: 250px;
+            float: right;
+
+        }
+    }
+    .pag_ination{
+        margin-top: 20px;
+    }
+    .BatchUpload{
+        text-align: center;
+    }
+    .formEdit{
+        width: 60%;
+    }
+</style>

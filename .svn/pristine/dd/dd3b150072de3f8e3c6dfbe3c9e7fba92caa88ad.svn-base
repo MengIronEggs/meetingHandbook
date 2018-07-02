@@ -1,0 +1,49 @@
+export default {
+    state: {
+        objectType: '',     //entry  carousel
+
+        entryArray: [],         //入口列表
+        entryIndex: 0,          //入口序号
+        carouselArray: [],      //轮播图列表
+
+        articleList: [],        //文章列表
+        // 行政管理部分列表
+        managementArr:[],
+        choosManIndex:0,
+        chooseLableIndex:0,
+    },
+    mutations: {
+        initArticleList(state, {articleList}){
+            state.articleList = articleList;
+        },
+
+        initCarouselArray(state, {carouselArray}){
+            state.carouselArray = carouselArray;
+        },
+
+        initEntry(state, {entryArray}){
+            state.entryArray = entryArray;
+        },
+
+        chooseCarousel(state, {}) {
+            state.objectType = 'carousel';
+        },
+
+        chooseEntry(state, {entryIndex}) {
+            state.objectType = 'entry';
+            state.entryIndex = entryIndex;
+        },
+        // 行政管理数据
+        managementList(state,{managementArr}){
+            state.managementArr = managementArr;
+        },
+        // 选择列表
+        chooseManage(state,{choosManIndex,chooseLableIndex}){
+            state.objectType =  'manage';
+            state.choosManIndex = choosManIndex;//title的下标值
+            state.chooseLableIndex = chooseLableIndex;//title下面lable的下标值
+        }
+    },
+    actions: {},
+    getters: {}
+}

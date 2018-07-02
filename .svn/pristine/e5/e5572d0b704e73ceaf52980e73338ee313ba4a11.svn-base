@@ -1,0 +1,131 @@
+export default {
+    state: {
+        objectType: '', //entry  carousel
+        entryArray: [], //入口列表
+        entryIndex: 0, //入口序号
+        carouselArray: [], //轮播图列表
+        articleList: [], //文章列表
+        // 侧边栏数组数据
+        menuArr: [],
+        menuBtnIndex: {
+            id: 0
+        },
+        // 行政管理部分轮播
+        LoadBanner: {
+            id: 0,
+            productclass: '轮播图',
+            producttype: '',
+            productprop: [],
+        },
+        // 修改内容是list 的数据
+        listArrData: {
+            id: '',
+            producttype: '',
+            productprop: [],
+            productico: '',
+        },
+        // 列表数据
+        managementArr: [],
+        // 按钮排序数组
+        shortArr:[],
+        // 下拉框集合
+        selectOption: [],
+        // 底部footer数据
+        footerList: {
+            id: 0,
+            productclass: '底部按钮',
+            producttype: '',
+            productprop: {
+                one: 'A',
+                two: 'B',
+                three: 'C',
+                aboutUs: {userArr:[],text:''},
+            },
+        },
+        choosManIndex: 0,
+        chooseLableIndex: 0,
+        // 新增列表综合管理
+        newMangeMentList: {
+            productorder: '', //顺序
+            productname: '', //标签名称
+            producttype: '', //类型
+            productclass: '', //类标题
+            productprop: {
+                lableImg: '', //列表图片
+                href: '', //外链地址
+            }, //图片集合
+        },
+        // 修改列表数据管理集合
+        editMangeMentList: {
+            id: '',
+            productorder: '', //顺序
+            productname: '', //标签名称
+            producttype: '', //类型
+            productclass: '', //类标题
+            productprop: {
+                bannerImg: [], //轮播图片集合
+            }, //图片集合
+        },
+        // 判断状态，判断为新增的数据还是修改的数据
+        isState: false,
+        // 权限控制数组
+        admindArr: [],
+    },
+    mutations: {
+        banner(state, {
+            object
+        }) {
+            state.LoadBanner = object;
+        },
+        initArticleList(state, {
+            articleList
+        }) {
+            state.articleList = articleList;
+        },
+
+        initCarouselArray(state, {
+            carouselArray
+        }) {
+            state.carouselArray = carouselArray;
+        },
+
+        initEntry(state, {
+            entryArray
+        }) {
+            state.entryArray = entryArray;
+        },
+
+        chooseCarousel(state, {}) {
+            state.objectType = 'carousel';
+        },
+
+        chooseEntry(state, {
+            entryIndex
+        }) {
+            state.objectType = 'entry';
+            state.entryIndex = entryIndex;
+        },
+        // 行政管理数据
+        managementList(state, {
+            managementArr
+        }) {
+            state.managementArr = managementArr;
+        },
+        // 选择列表
+        chooseManage(state, {
+            choosManIndex,
+            chooseLableIndex
+        }) {
+            state.choosManIndex = choosManIndex; //title的下标值
+            state.chooseLableIndex = chooseLableIndex; //title下面lable的下标值
+        },
+        // 按钮排序数组赋值
+        shortArrSet(state,{
+            shortArr
+        }){
+            state.shortArr = shortArr;
+        }
+    },
+    actions: {},
+    getters: {}
+}
