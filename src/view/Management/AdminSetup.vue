@@ -214,7 +214,7 @@ export default {
         obj.userid = parseInt(this.userid);
         post_data.push(obj);
       }
-    //  console.log(post_data);
+     console.log(post_data);
       this.$post("AsBatchAuthSave", post_data).then(res => {
         if (res.Code == 200) {
           this.$showMsgTip("设置成功");
