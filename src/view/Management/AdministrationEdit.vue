@@ -460,17 +460,16 @@ export default {
     delectCLick() {
       // 多条记录删除方法
        if (this.SelectionChangeArr.length == 0) {
-        this.$showMsgTip("请选择要删除的记录");
+        this.$showErrorTip("请选择要删除的记录");
         return false;
       }
       let arr = this.SelectionChangeArr.map(item=>{
         return item.id;
       })
       let ids = arr.join(',');
-      console.log(ids);
       this.$get(`AsFileBatchDelete?ids=${ids}`).then(res =>{
         if(res.Code == 200){
-          alert('删除成功');
+          this.$showMsgTip("删除成功");
         }
       })
       
