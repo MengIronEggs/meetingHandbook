@@ -4,11 +4,11 @@
             <mStructure/>
             <mAttribute @refreshLis="managementListLoad"/>
         </div>
-        <footer class="footer">
-            <!-- <el-button type="success" @click="previewDialogVisible = true">预览</el-button> -->
-            <!-- <el-button type="primary" @click="submit">保存</el-button> -->
-            <!-- <el-button type="info" @click="goback">返回</el-button> -->
-        </footer>
+        <!-- <footer class="footer">
+            <el-button type="success" @click="previewDialogVisible = true">预览</el-button>
+            <el-button type="primary" @click="submit">保存</el-button>
+            <el-button type="info" @click="goback">返回</el-button>
+        </footer> -->
         <!--预览提示框-->
         <!-- <preview :previewDialogVisible="previewDialogVisible" :url="previewUrl" @close="previewDialogVisible = false" /> -->
     </div>
@@ -233,7 +233,7 @@ export default {
   justify-content: space-between;
   padding: 20px;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 .footer {
   padding: 10px 0;

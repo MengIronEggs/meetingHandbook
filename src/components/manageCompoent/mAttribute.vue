@@ -149,11 +149,6 @@
                               </div>
                           </el-form-item>
                         </div>
-                        <!-- <el-form-item style="margin-top:20px;" label="限制查看" label-width="80px">
-                            <el-checkbox-group style="float:left;" v-model="modelCheck">
-                                <el-checkbox label="是/否"  @change.native.stop="onChange" name="type"></el-checkbox>
-                            </el-checkbox-group>
-                        </el-form-item>  -->
                         <template>
                           <div style="width:100%;height:40px;text-align: left;line-height: 40px;padding-left: 10px">
                             <el-switch
@@ -268,7 +263,6 @@
             <div v-if="formType" style="width:100%;height:30px;margin-top:20px;">
                 <el-button style="width:40%;" type="primary" @click="saveClick">保存</el-button>
             </div>
-             
      </div>
 </template>
 
@@ -308,9 +302,7 @@ export default {
   methods: {
     // 按钮排序
     selectChange(){
-      console.log(this.btnSelectVal);
       let newArr = [];
-      console.log('开始数组',this.BtnArrTmp);
       let ListArr = this.BtnArrTmp;
       ListArr.forEach(element => {
           if(element.DataTitle == this.btnSelectVal.one){
@@ -323,16 +315,7 @@ export default {
             newArr[2]=element;
           }
       });
-      console.log('xinde ',newArr);
       this.$store.state.attribute.managementArr = newArr;
-            // let stateVal = this.$store.state.attribute.managementArr[index];
-      // ListArr.forEach((item,i)=> {
-      //   if(item.DataTitle == val){
-      //     this.$store.state.attribute.managementArr[index] =  item;
-      //     this.$store.state.attribute.managementArr[i] = stateVal;
-      //   }
-      // });
-      // console.log('结束数组',this.$store.state.attribute.managementArr);
     },
     // 删除产品之前的认证，如果产品有内容，提示按层级删除
     pageLoad() {
@@ -719,6 +702,10 @@ export default {
   width: 100%;
   min-width: 350px;
   text-align: center;
+  height: 500px;
+  overflow-y: auto;
+  border:1px solid #000;
+  padding-bottom: 10px;
 }
 .box-card {
   margin: 10px;

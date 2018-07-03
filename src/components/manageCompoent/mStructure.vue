@@ -274,12 +274,13 @@ export default {
   padding: 0 10px;
 }
 .device {
+  height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: start;
   border: 1px solid #333;
   width: 375px;
-  height: 820px;
+  // height: 820px;
   /* overflow: auto; */
   margin: 0 auto;
   position: relative;
