@@ -458,30 +458,44 @@ export default {
     },
     // 删除按钮
     delectCLick() {
-      if (this.SelectionChangeArr.length > 1) {
-        this.$showMsgTip("您只能删除一条记录");
-        return false;
-      }
-      if (this.SelectionChange.length == 0) {
+      // 多条记录删除方法
+       if (this.SelectionChangeArr.length == 0) {
         this.$showMsgTip("请选择要删除的记录");
         return false;
       }
-      let post_data = {
-        id: this.SelectionChangeArr[0].id,
-        pid: this.SelectionChangeArr[0].pid,
-        filename: this.SelectionChangeArr[0].filename,
-        filetype: this.SelectionChangeArr[0].filetype,
-        fileid: this.SelectionChangeArr[0].fileid,
-        downloadcount: this.SelectionChangeArr[0].downloadcount,
-        rating: this.SelectionChangeArr[0].rating,
-        createtime: this.SelectionChangeArr[0].createtime,
-        updatetime: this.SelectionChangeArr[0].updatetime,
-        deleted: this.SelectionChangeArr[0].deleted
-      };
-      this.$post("AsFilelistDelete", post_data).then(res => {
-        this.$showMsgTip("删除成功");
-        this.pageLoad(this.pid);
-      });
+      let arr = this.SelectionChangeArr.map(item=>{
+        return item.id;
+      })
+      let ids = arr.join(',');
+      console.log(ids);
+      this.$get(`AsFileBatchDelete?ids=${ids}`).then(res =>{
+        if(res.Code == 200){
+          alert('删除成功');
+        }
+      })
+      
+      // 单条记录删除方法
+      // if (this.SelectionChangeArr.length > 1) {
+      //   this.$showMsgTip("您只能删除一条记录");
+      //   return false;
+      // }
+     
+      // let post_data = {
+      //   id: this.SelectionChangeArr[0].id,
+      //   pid: this.SelectionChangeArr[0].pid,
+      //   filename: this.SelectionChangeArr[0].filename,
+      //   filetype: this.SelectionChangeArr[0].filetype,
+      //   fileid: this.SelectionChangeArr[0].fileid,
+      //   downloadcount: this.SelectionChangeArr[0].downloadcount,
+      //   rating: this.SelectionChangeArr[0].rating,
+      //   createtime: this.SelectionChangeArr[0].createtime,
+      //   updatetime: this.SelectionChangeArr[0].updatetime,
+      //   deleted: this.SelectionChangeArr[0].deleted
+      // };
+      // this.$post("AsFilelistDelete", post_data).then(res => {
+      //   this.$showMsgTip("删除成功");
+      //   this.pageLoad(this.pid);
+      // });
     },
     // 小编辑按钮
     EditLineData() {

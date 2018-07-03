@@ -2,21 +2,11 @@
     <div class="AdministrationEdit">
         <el-form :model="fromData">
             <el-row>
-                <el-col :span="8">
-                    <el-form-item  label="文件类型" label-width="80px" >
-                        <el-select style="width:100%;" v-model="fromData.fileType" placeholder="请选择类型" >
-                            <el-option-group
-                                v-for="group in entryOptions"
-                                :key="group.label"
-                                :label="group.label">
-                                <el-option
-                                    v-for="item in group.options"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                                </el-option>
-                            </el-option-group>
-                        </el-select>
+                <el-col :span="9">
+                    <el-form-item label="综合搜索" label-width="80px">
+                      <el-input v-model="fromData.keyWord" placeholder="请输入关键字">
+                          <el-button slot="append" icon="el-icon-search" @click="InputSearchClick"></el-button>
+                      </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
@@ -39,11 +29,7 @@
             </el-row>
             <el-row>
                 <el-col :span="8">
-                    <el-form-item label="综合搜索" label-width="80px">
-                        <el-input v-model="fromData.keyWord" placeholder="请输入关键字">
-                            <el-button slot="append" icon="el-icon-search" @click="InputSearchClick"></el-button>
-                        </el-input>
-                    </el-form-item>
+                    
                 </el-col>
             </el-row>
         </el-form>
