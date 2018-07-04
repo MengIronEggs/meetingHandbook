@@ -344,11 +344,8 @@ export default {
     },
     // 删除
     deleteClick(index){
-      console.log(index);
       if(this.btnArr.length != 1){
         this.btnArr.splice(index,1);
-        console.log('12343442432423143',this.btnArr);
-        
         this.manageMent.productprop.btnLinkArr = this.btnArr
       }else{
         this.btnArr[0].btnName = "";
