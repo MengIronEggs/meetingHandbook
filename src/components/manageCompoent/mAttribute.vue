@@ -149,6 +149,7 @@
                               </div>
                           </el-form-item>
                         </div>
+                        <!-- 限制查看开关按钮 -->
                         <template>
                           <div style="width:100%;height:40px;text-align: left;line-height: 40px;padding-left: 10px">
                             <el-switch
@@ -158,6 +159,29 @@
                             </el-switch>
                           </div>
                         </template>
+                        <!-- 增加外链开关按钮 -->
+                        <template>
+                          <div  style="width:100%;height:40px;text-align: left;line-height: 40px;padding-left: 10px">
+                            <el-switch
+                              v-model="linkCheck"
+                              @change="linkChange"
+                              inactive-text="添加外链">
+                            </el-switch>
+                          </div>
+                        </template>
+                        <el-form-item v-show="linkCheck" class="btnContent" style="margin-top:20px;margin-left:0;width:100%;" >
+                          <template>
+                            <div style="width:100%;border:1px solid #ccc;border-radius:3px;float:right;overflow-y:scroll;">
+                                <div class="btngroup" :key="index" v-for="(item,index) in btnArr">
+                                  <el-input style="width:25%;float:left;" v-model="item.btnName" placeholder="按钮名称"></el-input>
+                                  <el-input  style="width:65%;margin-left:2%;float:left;" @change="complatClick(item)" v-model="item.btnLinkUrl" placeholder="跳转连接">
+                                    <!-- <el-button slot="append" @click="complatClick(item)">完成</el-button> -->
+                                  </el-input>
+                                  <el-button style="width:5%;float;right;padding:0;border:0;" @click="deleteClick(index)" slot="append" icon="el-icon-close"></el-button>
+                                </div>
+                            </div>
+                          </template>
+                        </el-form-item>
                         <el-form-item style="margin-top:20px;width:100%;" label="类型" >
                             <el-select v-model="manageMent.producttype" placeholder="请选择" @change="changEntryType1">
                                 <el-option-group
@@ -280,7 +304,9 @@ export default {
       linkUrl:'',//外链地址
       userid: "", //管理人员的id
       allPeopleArr:[],//授权人数组
-      modelCheck:'',
+      modelCheck:'',//限制查看
+      linkCheck:false,//添加按钮外链地址
+      btnArr:[{btnName:'',btnLinkUrl:''}],
       entryOptions: [
         {
           label: "",
@@ -300,6 +326,36 @@ export default {
     };
   },
   methods: {
+    //按钮外链完成的点击事件
+    complatClick(item){
+      if(item.btnLinkUrl.indexOf('http') == -1){
+        this.$showErrorTip('请输入完整的连接');
+        return false;
+      }
+      let obj ={};
+      obj.btnName = item.btnName;
+      obj.btnLinkUrl = item.btnLinkUrl;
+      if(this.btnArr.length < 4){
+        this.btnArr.push(obj);
+        this.btnArr[this.btnArr.length-1].btnName = "";
+        this.btnArr[this.btnArr.length-1].btnLinkUrl = "";
+        this.manageMent.productprop.btnLinkArr = this.btnArr
+      }
+    },
+    // 删除
+    deleteClick(index){
+      console.log(index);
+      if(this.btnArr.length != 1){
+        this.btnArr.splice(index,1);
+        console.log('12343442432423143',this.btnArr);
+        
+        this.manageMent.productprop.btnLinkArr = this.btnArr
+      }else{
+        this.btnArr[0].btnName = "";
+        this.btnArr[0].btnLinkUrl = "";
+        this.manageMent.productprop.btnLinkArr = this.btnArr
+      }
+    },
     // 按钮排序
     selectChange(){
       let newArr = [];
@@ -391,14 +447,17 @@ export default {
         }
       );
     },
-    // 复选框的点击事件
-    // 复选框值改变的事件
+    // 限制查看开关的点击事件
     onChange(val) {
       if(val){
         this.manageMent.needauth = 1;
       }else{
         this.manageMent.needauth = 0;
       }
+    },
+    // 添加按钮连接的点击事件
+    linkChange(val){
+      this.manageMent.productprop.btnSwith = true;
     },
     // 筛选出来的表格的点击事件
     handleCurrentChange(val) {
@@ -561,9 +620,16 @@ export default {
         }else{
           obj.productprop.allPeopleArr =  this.allPeopleArr;
           obj.productprop.linkUrl = this.linkUrl;
+          this.btnArr = this.btnArr.filter(item=>{
+              return !(!item.btnName || item.btnName === "");
+          });
+          if(this.btnArr.length > 0){
+            obj.productprop.btnLinkArr = this.btnArr;
+          }
+          obj.productprop.btnSwith =  this.linkCheck;
         }
-        
         obj.productclass = this.titleName;
+        
         this.submit(obj);
       }
       if (this.formType == "btnLink") {
@@ -601,6 +667,11 @@ export default {
     manageMent() {
        //  控制搜索的表格的显示和隐藏
       this.tableShow = false;
+      this.btnArr =  [];
+      let obj = {};
+      obj.btnName = '';
+      obj.btnLinkUrl = '';
+      this.btnArr.push(obj);
       this.userid=this.$store.state.attribute.managementArr[
           this.$store.state.attribute.choosManIndex
         ].DataVal[this.$store.state.attribute.chooseLableIndex].userid;
@@ -637,15 +708,42 @@ export default {
           this.$store.state.attribute.choosManIndex
           ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop).linkUrl;
       }else{
+        // 管理人
         this.allPeopleArr = this.$store.state.attribute.managementArr[
           this.$store.state.attribute.choosManIndex
           ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.allPeopleArr;
-        
+        // 跳转地址
         this.linkUrl = this.$store.state.attribute.managementArr[
           this.$store.state.attribute.choosManIndex
           ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.linkUrl;
+        // 按钮跳转数据
+        // 按钮开关
+        if(this.$store.state.attribute.managementArr[
+          this.$store.state.attribute.choosManIndex
+          ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.btnSwith){
+            this.linkCheck = this.$store.state.attribute.managementArr[
+          this.$store.state.attribute.choosManIndex
+          ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.btnSwith
+        }else{
+          this.linkCheck = false;
+        }
+        // 按钮数组
+        if(this.$store.state.attribute.managementArr[
+          this.$store.state.attribute.choosManIndex
+          ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.btnLinkArr){
+          this.btnArr = this.$store.state.attribute.managementArr[
+          this.$store.state.attribute.choosManIndex
+          ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.btnLinkArr;
+          if(this.btnArr[this.btnArr.length - 1].btnName){
+            let obj = {};
+            obj.btnName = '';
+            obj.btnLinkUrl = '';
+            this.btnArr.push(obj);
+          }
+        }else{
+          this.btnArr = this.btnArr;
+        }
       }
-        // console.log('看看是个什么鬼',this.allPeopleArr,this.linkUrl);
       if(isAdmiId.needauth == 0){
         this.modelCheck = false;
       }else{
@@ -730,6 +828,14 @@ export default {
   color: #fff;
   transform: translate(0%, -50%);
 }
+.btngroup{
+  width:98%;
+  margin-left:2%;
+  margin-top: 3px;
+  margin-bottom:10px;
+  height: 35px;
+  position: relative;
+}
 .carousel-bottom {
   margin: 40px 0;
 }
@@ -742,4 +848,13 @@ export default {
     color: #606266 !important;
   }
 </style>
+<style lang='less'>
+.btnContent{
+ .el-form-item__content{
+   margin-left:0 !important;
+ }
+}
+
+</style>
+
 
