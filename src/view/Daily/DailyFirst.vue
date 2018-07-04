@@ -280,6 +280,7 @@ export default {
     tabListLoadFn() {
       this.$get(`GetAsDailydictWhere`).then(res => {
         if (res.Code == 200) {
+          console.log('111111111111111',res);
           // 获取tab栏的按钮
           this.tabArr = Array.from(
             new Set(
@@ -420,7 +421,7 @@ export default {
       this.$post(`AsDailydictSave`, post_data).then(res => {
         if (res.Code == 200) {
           this.$showMsgTip(`保存成功`);
-          this.tabListLoadFn();
+          // this.tabListLoadFn();
         }
       });
     }

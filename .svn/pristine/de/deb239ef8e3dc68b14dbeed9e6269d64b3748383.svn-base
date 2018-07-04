@@ -101,9 +101,10 @@
                           class="upload-demo"
                           :data="{'pid':pid}"
                           :action="UPLOAD_FILE"
-                          :on-success="singleUpLoadSuccess"
+                         
+                          :on-change="fileChange"
                           :file-list="fileListArr">
-                          <!-- :on-change="fileChange" -->
+                           <!-- :on-success="singleUpLoadSuccess" -->
                          <el-button class="btn-add" type="primary" icon="el-icon-plus" circle></el-button>
                         </el-upload>
                         <el-form style="margin-top:20px;" label-width="80px">

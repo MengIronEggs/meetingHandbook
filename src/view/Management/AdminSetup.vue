@@ -200,20 +200,29 @@ export default {
     // 保存设置的权限方法
     saveAdminFn() {
       let post_data = [];
-      for (let i = 0; i < this.adminArr.length; i++) {
+      if(this.adminArr.length == 0 && this.dailyManageMentArr.length == 0){
         let obj = {};
         obj.producttype = 0;
-        obj.productid = this.adminArr[i];
+        obj.productid = 0;
         obj.userid = parseInt(this.userid);
         post_data.push(obj);
+      }else{
+        for (let i = 0; i < this.adminArr.length; i++) {
+          let obj = {};
+          obj.producttype = 0;
+          obj.productid = this.adminArr[i];
+          obj.userid = parseInt(this.userid);
+          post_data.push(obj);
+        }
+        for (let i = 0; i < this.dailyManageMentArr.length; i++) {
+          let obj = {};
+          obj.producttype = 1;
+          obj.productid = this.dailyManageMentArr[i];
+          obj.userid = parseInt(this.userid);
+          post_data.push(obj);
+        }
       }
-      for (let i = 0; i < this.dailyManageMentArr.length; i++) {
-        let obj = {};
-        obj.producttype = 1;
-        obj.productid = this.dailyManageMentArr[i];
-        obj.userid = parseInt(this.userid);
-        post_data.push(obj);
-      }
+      
       // console.log(post_data，111111);
       this.$post("AsBatchAuthSave", post_data).then(res => {
         if (res.Code == 200) {
