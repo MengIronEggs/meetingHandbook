@@ -133,7 +133,7 @@
     }
     .content_main{
         height: 100%;
-        overflow-y: auto;
+        overflow-y: hidden;
     }
     .site-header {
         height: 60px;

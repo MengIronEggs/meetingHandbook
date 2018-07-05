@@ -10,29 +10,21 @@
                 :router="true"
                 >
                 <router-link to="/main">
-                    <el-menu-item @click.native.stop="meetingClick" index="1">
+                    <el-menu-item @click.native="activeColor = false" index="1">
                         <i class="el-icon-menu"></i>
                         <span slot="title">会议手册</span>
                     </el-menu-item>
                 </router-link>
-                <el-submenu index="2" @click.native.stop="titleClick">
+                <el-submenu index="2" @click.native="titleClick">
                     <template slot="title" >
                         <i class="el-icon-setting" :class="{'oSpan': activeColor}"></i>
                         <span :class="{'oSpan': activeColor}">综合行政</span>
                     </template>
                     <el-menu-item-group>
-                      <el-menu-item @click.native.stop="dailyDictClick" index="2-1">
-                        <i class="el-icon-view"></i>
-                        <span slot="title">日报管理</span>
-                      </el-menu-item>
-                      <el-menu-item @click.native.stop="searchClick" index="2-2">
-                        <i class="el-icon-search"></i>
-                        <span slot="title">综合搜索</span>
-                      </el-menu-item>
-                      <el-menu-item @click.native.stop="listClick(item)" :key="index1" :index="item.productname" v-for="(item,index1) in menuArr" >
-                        <img style="width:20px;margin-left:5px;" :src="item.producticon" alt="">
-                        <span>{{item.productname}}</span>
-                      </el-menu-item>
+                        <el-menu-item @click.native.stop="listClick(item)" :key="index1" :index="item.productname" v-for="(item,index1) in menuArr" >
+                          <img style="width:20px;margin-left:5px;" :src="item.producticon" alt="">
+                          <span>{{item.productname}}</span>
+                        </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
                 <router-link to="/personalmanagement">
@@ -40,6 +32,24 @@
                         <img v-show="imgFlag" src="../../static/personal.png" style="width:20px;" alt="">
                         <img v-show="!imgFlag" src="../../static/personal1.png" style="width:20px;" alt="">
                         <span slot="title"><span style="display:inline-block;width:8px;"></span>人员管理</span>
+                    </el-menu-item>
+                </router-link>
+                <router-link to="/dailyfirst">
+                    <el-menu-item @click.native="activeColor = false" index="4">
+                        <i class="el-icon-view"></i>
+                        <span slot="title">日报管理</span>
+                    </el-menu-item>
+                </router-link>
+                <router-link to="/ComprehensiveSearch">
+                    <el-menu-item @click.native="activeColor = false" index="5">
+                        <i class="el-icon-search"></i>
+                        <span slot="title">综合搜索</span>
+                    </el-menu-item>
+                </router-link>
+               <router-link to="/fulltextsearch">
+                    <el-menu-item @click.native="activeColor = false" index="6">
+                        <i class="el-icon-search"></i>
+                        <span slot="title">全文检索</span>
                     </el-menu-item>
                 </router-link>
             </el-menu>
@@ -58,19 +68,6 @@ export default {
     };
   },
   methods: {
-    meetingClick(){
-      this.activeColor = false;
-    },
-    // 日报系统
-    dailyDictClick(){
-      this.activeColor = false;
-      this.$router.push({path:'/dailyfirst'});
-    },
-    // 综合搜索
-    searchClick(){
-      this.activeColor = false;
-      this.$router.push({path:'/ComprehensiveSearch'});
-    },
     titleClick() {
       this.activeColor = true;
       this.$router.push({ path: "/managementEdit" });

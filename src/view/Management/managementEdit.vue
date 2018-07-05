@@ -1,16 +1,9 @@
 <template>
-    <div>
+    <div style="overflow:hidden;">
         <div class="container">
             <mStructure/>
             <mAttribute @refreshLis="managementListLoad"/>
         </div>
-        <!-- <footer class="footer">
-            <el-button type="success" @click="previewDialogVisible = true">预览</el-button>
-            <el-button type="primary" @click="submit">保存</el-button>
-            <el-button type="info" @click="goback">返回</el-button>
-        </footer> -->
-        <!--预览提示框-->
-        <!-- <preview :previewDialogVisible="previewDialogVisible" :url="previewUrl" @close="previewDialogVisible = false" /> -->
     </div>
 </template>
 

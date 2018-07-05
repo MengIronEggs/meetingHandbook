@@ -97,11 +97,12 @@
                 <div v-show="titleName=='添加'||this.titleName=='编辑'" class="formEdit">
                     <div style="width:500px;height:80%;margin-left:20px;;">
                         <div style="float:left;line-height:40px;margin-left:10px;">选择文件</div>
+                        <!-- :data="{'pid':pid,'md5':Filemd5}" -->
                         <el-upload
                           class="upload-demo"
-                          :data="{'pid':pid}"
+                          :data="dataObj"
                           :action="UPLOAD_FILE"
-                          :on-change="fileChange"
+                          :http-request="fileChange"
                           :on-success="singleUpLoadSuccess"
                           :file-list="fileListArr">
                          <el-button class="btn-add" type="primary" icon="el-icon-plus" circle></el-button>
@@ -197,6 +198,11 @@ export default {
       files:[],
       currentChunk:0,
       uploadeFileName:'',
+      // Filemd5:'',
+      dataObj:{
+        pid:'',
+        md5:'',
+      }
     };
   },
   methods: {
@@ -241,7 +247,7 @@ export default {
         }
       });
     },
-    // 文件上传成功回调
+    // 批量文件上传成功回调
     uploadSuccess(res, file) {
       if ((res.Code = 200)) {
         let TypeArr = res.Data.Filename.split(".");
@@ -297,9 +303,10 @@ export default {
       }
     },
     // 上传的改变事件
-    fileChange(res,file){
+    fileChange(file){
       this.currentChunk=0;
-         this.files = file[0];
+      // this.files = file[0];
+      this.files = file.file
       if(this.uploadeFileName == this.files.name){
         return false;
       }
@@ -314,24 +321,45 @@ export default {
       this.blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
       var start = this.currentChunk * chunkSize;
       var	end = ((start + chunkSize) >=  this.files.size) ? this.files.size : start + chunkSize;
-
-      this.fileReader.readAsArrayBuffer(this.blobSlice.call(this.files.raw, start, end));
+      this.fileReader.readAsArrayBuffer(this.blobSlice.call(this.files, start, end));
     },
     onFileload(){
           this.fileReader = new FileReader();
           this.fileReader.onload = (e)=> {
-            console.log('read chunk nr',  this.currentChunk + 1, 'of',  this.chunks);
             this.spark.append(e.target.result); // Append array buffer
             this.currentChunk++;
             if(this.currentChunk < this.chunks) {
                 this.loadNext();
             } else {
-              console.log(this.spark.end());
+              // this.Filemd5 = this.spark.end();
+              // console.log( this.Filemd5);
+              this.dataObj.pid = this.$route.query.pid;
+              this.dataObj.md5 = this.spark.end();
+              // console.log(this.dataObj);
+              this.fromSubmitFn();
             }
           };
           this.fileReader.onerror = function() {
             console.log('oops, something went wrong.');
           };
+    },
+    // fromSub
+    fromSubmitFn(){
+       let data = new FormData()
+        data.append("file", this.files)
+        data.append("pid", this.dataObj.pid)
+        data.append("md5",this.dataObj.md5);
+        console.log(this.dataObj)
+      fetch(`https://mt.guoanfamily.com/asmanage/HbfileSave`,{
+        method: 'post',
+        dataType: "json",
+        body: data
+      }).then((res)=>{
+        return res.json();
+      }).then(res=>{
+      console.log(res);
+        this.singleUpLoadSuccess(res,this.files)
+      })
     },
     // 单一文件上传
     singleUpLoadSuccess(res, file) {
@@ -391,9 +419,8 @@ export default {
             rating: 0,
             createtime: res.Data.Createtime,
             updatetime: res.Data.Updatetime,
-            deleted: 0
+            deleted: 0,
           };
-        
       }
     },
     // 提交的点击事件
@@ -412,11 +439,7 @@ export default {
           deleted: this.SelectionChangeArr[0].deleted
         };
       }
-      // else{
-        // console.log(this.resDataType);
-      //   return false;
-      // }
-     
+      
       this.dialogVisible = false;
       this.fileListArr = [];
       this.fromData.fileName = "";
@@ -501,31 +524,9 @@ export default {
       this.$get(`AsFileBatchDelete?ids=${ids}`).then(res =>{
         if(res.Code == 200){
           this.$showMsgTip("删除成功");
+          this.pageLoad(this.pid);
         }
       })
-      
-      // 单条记录删除方法
-      // if (this.SelectionChangeArr.length > 1) {
-      //   this.$showMsgTip("您只能删除一条记录");
-      //   return false;
-      // }
-     
-      // let post_data = {
-      //   id: this.SelectionChangeArr[0].id,
-      //   pid: this.SelectionChangeArr[0].pid,
-      //   filename: this.SelectionChangeArr[0].filename,
-      //   filetype: this.SelectionChangeArr[0].filetype,
-      //   fileid: this.SelectionChangeArr[0].fileid,
-      //   downloadcount: this.SelectionChangeArr[0].downloadcount,
-      //   rating: this.SelectionChangeArr[0].rating,
-      //   createtime: this.SelectionChangeArr[0].createtime,
-      //   updatetime: this.SelectionChangeArr[0].updatetime,
-      //   deleted: this.SelectionChangeArr[0].deleted
-      // };
-      // this.$post("AsFilelistDelete", post_data).then(res => {
-      //   this.$showMsgTip("删除成功");
-      //   this.pageLoad(this.pid);
-      // });
     },
     // 小编辑按钮
     EditLineData() {
@@ -542,12 +543,15 @@ export default {
   computed: {
     menuBtnIndex() {
       return this.menuIndex.id;
+    },
+    mdtNum(){
+      
     }
   },
   watch: {
     menuBtnIndex() {
       this.pageLoad(this.menuIndex.id);
-    }
+    },
   }
 };
 </script>

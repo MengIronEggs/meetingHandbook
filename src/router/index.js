@@ -17,11 +17,12 @@ const personalmanagement = resolve => require(['../view/Management/Personalmanag
 const adminSetup = resolve => require(['../view/Management/AdminSetup'], resolve);
 const aboutUs = resolve => require(['../view/Management/AboutUs'], resolve);
 const comprehensiveSearch = resolve => require(['../view/Management/ComprehensiveSearch'], resolve);
-
+const fulltextsearch = resolve => require(['../view/Management/Fulltextsearch'], resolve);
 // 日报部分
 
 const dailyfirst = resolve => require(['../view/Daily/DailyFirst'], resolve);
 const companyDetials = resolve => require(['../view/Daily/companyDetials'], resolve);
+
 
 Vue.use(Router);
 
@@ -72,6 +73,10 @@ export default new Router({
         },{
             path:'/comprehensiveSearch',
             component: comprehensiveSearch
+        }
+        ,{
+            path:'/fulltextsearch',
+            component: fulltextsearch
         }
         ,{
             path:'/dailyfirst',

@@ -164,7 +164,7 @@ export default {
       this.bannerData.reportcontent[index].imageUrl = res.Data.link;
       this.bannerData.companyname = this.companyName;
       this.bannerData.reportclass = this.dailyclass;
-      this.bannerData.reportdate = "2018-07-02";
+      this.bannerData.reportdate = this.dateTime;
       this.submit(this.bannerData);
     },
     // 保存的公共方法
@@ -210,8 +210,10 @@ export default {
       month = "0" + parseFloat(month);
     }
     let day = date.getDate();
+    if(day <= 9){
+      day = "0" + parseFloat(day);
+    }
     this.dateTime = year + "-" + month + "-" + day;
-    this.dateTime = "2018-07-02";
     this.PageLoade();
   }
 };

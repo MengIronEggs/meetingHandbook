@@ -279,9 +279,8 @@ export default {
   flex-direction: column;
   justify-content: start;
   border: 1px solid #333;
+  // width: 375px;
   width: 375px;
-  // height: 820px;
-  /* overflow: auto; */
   margin: 0 auto;
   position: relative;
 }

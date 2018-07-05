@@ -105,8 +105,10 @@
                            </el-table>
                           </div>
                         </template>
-                        <div style="width:100%;height:auto;position:relative;border-bottom:1px solid #ccc;border-top:1px solid #ccc;">
-                          <div style="position:absolute;left:0;top:60px;width:80px;height:40px;line-height:40px;font-size:14px;color:#606266;text-align:right;padding-right:15px;">授权人</div>
+                        <div class="bigdiv">
+                          <el-tooltip content="添加授权可拥有编辑权限" placement="top">
+                            <div class="showquan">授权人</div>
+                          </el-tooltip>
                           <el-form-item style="margin-top:20px;width:100%;" label="编辑授权">
                               <el-input v-model="namePhone" placeholder="输入姓名或电话搜索">
                                     <el-button @click="search1Click" slot="append" icon="el-icon-search"></el-button>
@@ -172,10 +174,25 @@
                         <el-form-item v-show="linkCheck" class="btnContent" style="margin-top:20px;margin-left:0;width:100%;" >
                           <template>
                             <div style="width:100%;border:1px solid #ccc;border-radius:3px;float:right;overflow-y:scroll;">
-                                <div class="btngroup" :key="index" v-for="(item,index) in btnArr">
-                                  <el-input style="width:25%;float:left;" v-model="item.btnName" placeholder="按钮名称"></el-input>
-                                  <el-input  style="width:65%;margin-left:2%;float:left;" @change="complatClick(item)" v-model="item.btnLinkUrl" placeholder="跳转连接">
-                                    <!-- <el-button slot="append" @click="complatClick(item)">完成</el-button> -->
+                                <div class="btngroup" :key="index" v-for="(item,index) in btnArr">                                
+                                  <div style="width:13%;height:40px;float:left;border-radius:4px;border: 1px solid #dcdfe6;">
+                                    <el-tooltip content="点击添加或修改图片" placement="top">
+                                      <el-upload
+                                        class="avatar-uploader"
+                                        :action="UPLOAD_IMAGE"
+                                        :data="{pid: manageMent.id}"
+                                        :show-file-list="false"
+                                        :on-success="(...arr) =>{
+                                          BtnEntrySuccess(index,...arr)
+                                        }"
+                                      >
+                                        <img style="width:45%;margin-top:2px;" v-show="item.btnImgurl !==''" :src="item.btnImgurl"  alt="">
+                                        <i v-show="item.btnImgurl==''" class="el-icon-plus avatar-uploader-icon"></i>
+                                      </el-upload>
+                                      </el-tooltip>
+                                  </div>
+                                  <el-input style="width:25%;float:left;margin-left:2%;" v-model="item.btnName" placeholder="按钮名称"></el-input>
+                                  <el-input style="width:50%;margin-left:2%;float:left;" @change="complatClick(item)" v-model="item.btnLinkUrl" placeholder="跳转连接">              
                                   </el-input>
                                   <el-button style="width:5%;float;right;padding:0;border:0;" @click="deleteClick(index)" slot="append" icon="el-icon-close"></el-button>
                                 </div>
@@ -306,7 +323,7 @@ export default {
       allPeopleArr:[],//授权人数组
       modelCheck:'',//限制查看
       linkCheck:false,//添加按钮外链地址
-      btnArr:[{btnName:'',btnLinkUrl:''}],
+      btnArr:[{btnImgurl:'',btnName:'',btnLinkUrl:''}],
       entryOptions: [
         {
           label: "",
@@ -326,6 +343,10 @@ export default {
     };
   },
   methods: {
+    // 按钮外链上传图片的点击事件
+    BtnEntrySuccess(index,res,file,){
+      this.btnArr[index].btnImgurl = res.Data.link;
+    },
     //按钮外链完成的点击事件
     complatClick(item){
       if(item.btnLinkUrl.indexOf('http') == -1){
@@ -339,6 +360,7 @@ export default {
         this.btnArr.push(obj);
         this.btnArr[this.btnArr.length-1].btnName = "";
         this.btnArr[this.btnArr.length-1].btnLinkUrl = "";
+        this.btnArr[this.btnArr.length-1].btnImgurl =  "";
         this.manageMent.productprop.btnLinkArr = this.btnArr
       }
     },
@@ -350,6 +372,7 @@ export default {
       }else{
         this.btnArr[0].btnName = "";
         this.btnArr[0].btnLinkUrl = "";
+        this.btnArr[0].btnImgurl =  "";
         this.manageMent.productprop.btnLinkArr = this.btnArr
       }
     },
@@ -638,6 +661,7 @@ export default {
   },
   created() {},
   mounted() {
+    
     // console.log('123423',this.$store.state.attribute.managementArr);
     // this.$store.state.attribute.managementArr.forEach(item=>{
     //   this.BtnArrTmp.push(item);
@@ -662,12 +686,14 @@ export default {
     },
     // 获取当前点击的列表的数据
     manageMent() {
+
        //  控制搜索的表格的显示和隐藏
       this.tableShow = false;
       this.btnArr =  [];
       let obj = {};
       obj.btnName = '';
       obj.btnLinkUrl = '';
+      obj.btnImgurl = '';
       this.btnArr.push(obj);
       this.userid=this.$store.state.attribute.managementArr[
           this.$store.state.attribute.choosManIndex
@@ -731,8 +757,9 @@ export default {
           this.btnArr = this.$store.state.attribute.managementArr[
           this.$store.state.attribute.choosManIndex
           ].DataVal[this.$store.state.attribute.chooseLableIndex].productprop.btnLinkArr;
-          if(this.btnArr[this.btnArr.length - 1].btnName){
+          if(this.btnArr[this.btnArr.length - 1].btnName && this.btnArr.length<4){
             let obj = {};
+            obj.btnImgurl = '';
             obj.btnName = '';
             obj.btnLinkUrl = '';
             this.btnArr.push(obj);
@@ -835,6 +862,12 @@ export default {
 }
 .carousel-bottom {
   margin: 40px 0;
+}
+.bigdiv{
+  width:100%;height:auto;position:relative;border-bottom:1px solid #ccc;border-top:1px solid #ccc;
+}
+.showquan{
+  position:absolute;left:0;top:72px;width:80px;height:40px;line-height:40px;font-size:14px;color:#606266;text-align:right;padding-right:15px;
 }
 </style>
 <style scoped>
