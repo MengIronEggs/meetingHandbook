@@ -280,7 +280,6 @@ export default {
     tabListLoadFn() {
       this.$get(`GetAsDailydictWhere`).then(res => {
         if (res.Code == 200) {
-          console.log('111111111111111',res);
           // 获取tab栏的按钮
           this.tabArr = Array.from(
             new Set(

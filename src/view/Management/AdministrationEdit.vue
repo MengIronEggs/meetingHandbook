@@ -101,9 +101,9 @@
                           class="upload-demo"
                           :data="{'pid':pid}"
                           :action="UPLOAD_FILE"
+                          :on-change="fileChange"
                           :on-success="singleUpLoadSuccess"
                           :file-list="fileListArr">
-                          <!-- :on-change="fileChange" -->
                          <el-button class="btn-add" type="primary" icon="el-icon-plus" circle></el-button>
                         </el-upload>
                         <el-form style="margin-top:20px;" label-width="80px">
@@ -191,6 +191,12 @@ export default {
       post_data: {},
       resDataType:{},
       chunks:'',
+      fileReader:null,
+      blobSlice:null,
+      spark:new SparkMD5.ArrayBuffer(),
+      files:[],
+      currentChunk:0,
+      uploadeFileName:'',
     };
   },
   methods: {
@@ -292,35 +298,40 @@ export default {
     },
     // 上传的改变事件
     fileChange(res,file){
-      var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
-      let files = file[0];
-      let chunkSize = 2097152;// Read in chunks of 2MB
-      this.chunks = Math.ceil(files.size / chunkSize);
-      let currentChunk = 0;
-      let spark = new SparkMD5.ArrayBuffer();
-      let fileReader = new FileReader();
-      let self = this;
-      console.log(fileReader)
-      fileReader.onload = function(e) {
-					console.log('read chunk nr', currentChunk + 1, 'of', self.chunks);
-					spark.append(e.target.result); // Append array buffer
-					currentChunk++;
-					if(currentChunk < self.chunks) {
-						loadNext();
-					} else {
-            console.log(spark.end());
-					}
-        };
-        fileReader.onerror = function() {
-					console.log('oops, something went wrong.');
-        };
-        function loadNext() {
-          console.log('chunkSize',currentChunk);
-					var start = currentChunk * chunkSize,
-						end = ((start + chunkSize) >= files.size) ? files.size : start + chunkSize;
-					fileReader.readAsArrayBuffer(blobSlice.call(files, start, end));
-        }
-        loadNext();
+      this.currentChunk=0;
+         this.files = file[0];
+      if(this.uploadeFileName == this.files.name){
+        return false;
+      }
+      this.uploadeFileName = this.files.name;
+      let chunkSize =2097152;
+      this.chunks = Math.ceil(this.files.size / chunkSize);
+      this.onFileload();
+      this.loadNext();
+    },
+    loadNext() {
+      let chunkSize =2097152;
+      this.blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+      var start = this.currentChunk * chunkSize;
+      var	end = ((start + chunkSize) >=  this.files.size) ? this.files.size : start + chunkSize;
+
+      this.fileReader.readAsArrayBuffer(this.blobSlice.call(this.files.raw, start, end));
+    },
+    onFileload(){
+          this.fileReader = new FileReader();
+          this.fileReader.onload = (e)=> {
+            console.log('read chunk nr',  this.currentChunk + 1, 'of',  this.chunks);
+            this.spark.append(e.target.result); // Append array buffer
+            this.currentChunk++;
+            if(this.currentChunk < this.chunks) {
+                this.loadNext();
+            } else {
+              console.log(this.spark.end());
+            }
+          };
+          this.fileReader.onerror = function() {
+            console.log('oops, something went wrong.');
+          };
     },
     // 单一文件上传
     singleUpLoadSuccess(res, file) {
