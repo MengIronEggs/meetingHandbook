@@ -602,6 +602,7 @@ export default {
       this.$get(
         `RenameProductClass?newname=${this.newTitle}&oldname=${this.titleName}`
       ).then(res => {
+        
         if (res.Code == 200) {
           //   this.titleName = this.newTitle;
           this.$store.state.attribute.managementArr[
