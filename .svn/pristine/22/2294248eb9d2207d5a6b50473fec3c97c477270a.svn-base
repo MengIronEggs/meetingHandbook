@@ -46,12 +46,12 @@
                         <span slot="title">综合搜索</span>
                     </el-menu-item>
                 </router-link>
-               <!-- <router-link to="/fulltextsearch">
+               <router-link to="/fulltextsearch">
                     <el-menu-item @click.native="activeColor = false" index="6">
                         <i class="el-icon-search"></i>
                         <span slot="title">全文检索</span>
                     </el-menu-item>
-                </router-link> -->
+                </router-link>
             </el-menu>
         </nav>
    </div>
