@@ -5,10 +5,11 @@
                 <el-button slot="append" icon="el-icon-search" @click="InputSearchClick"></el-button>
             </el-input>
         </div>
-        <div class="width:100%;">
-            <div :key="index" v-for="(item,index) in searchResultArr">
-                <div>{{item.doc_title}}</div>
-                <div v-html="item.createtime + item.text"></div>
+        <div style="width: 100%;top: 140px;position: fixed;height: 450px;overflow: auto;">
+            <div :key="index" v-for="(item,index) in searchResultArr"  @click="searchDownloadClick(item)">
+                <div class="searchTitle">{{item.doc_title}}</div>
+                <div class="searchContent" v-html="item.text"></div>
+                <div class="searchTime">{{item.createtime}}</div>
             </div>
         </div>
     </div>
@@ -23,6 +24,7 @@ export default {
     };
   },
   methods:{
+    //   搜索数据
       InputSearchClick(){
         if (this.searchText) {
             // fullsearch?query=主题词
@@ -36,6 +38,10 @@ export default {
         } else {
             this.$showErrorTip("请输入搜索内容");
         }
+      },
+    //   点击下载
+      searchDownloadClick(item){
+          window.location.href = item.doc_link;
       }
   },
   mounted(){
@@ -52,7 +58,30 @@ export default {
     padding-top: 20px;
 }
 .topInput{
-    width:100%;
+    width:50%;
     height:40px;
+    position: fixed;
+    left: 35%;
+}
+.searchTitle{
+    width:100%;
+    /* height:40px; */
+    font-size: 18px;
+    /* line-height: 40px; */
+    font-weight: 500;
+    color: #000;
+    margin-top: 20px;
+}
+.searchContent{
+    width:100%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+}
+.searchTime{
+    width:100%;
+    /* height:20px;
+    line-height: 20px; */
+    font-size: 14px;
 }
 </style>
