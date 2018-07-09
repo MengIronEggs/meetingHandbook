@@ -5,8 +5,8 @@
                 <el-button slot="append" icon="el-icon-search" @click="InputSearchClick"></el-button>
             </el-input>
         </div>
-        <div style="width: 100%;top: 140px;position: fixed;height: 450px;overflow: auto;">
-            <div :key="index" v-for="(item,index) in searchResultArr"  @click="searchDownloadClick(item)">
+        <div style="width:85%;top: 140px;position: fixed;height: 450px;overflow: auto;">
+            <div style="width:95%;height:auto;" :key="index" v-for="(item,index) in searchResultArr"  @click="searchDownloadClick(item)">
                 <div class="searchTitle">{{item.doc_title}}</div>
                 <div class="searchContent" v-html="item.text"></div>
                 <div class="searchTime">{{item.createtime}}</div>
@@ -64,24 +64,22 @@ export default {
     left: 35%;
 }
 .searchTitle{
-    width:100%;
-    /* height:40px; */
+    width:85%;
     font-size: 18px;
-    /* line-height: 40px; */
+    line-height: 40px;
     font-weight: 500;
     color: #000;
     margin-top: 20px;
 }
 .searchContent{
-    width:100%;
-    height: 30px;
+    width:85%;
     line-height: 30px;
     font-size: 16px;
 }
 .searchTime{
-    width:100%;
-    /* height:20px;
-    line-height: 20px; */
+    width:85%;
+    line-height: 20px;
     font-size: 14px;
+    color: #2518e2;
 }
 </style>

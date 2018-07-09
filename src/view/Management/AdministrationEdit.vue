@@ -84,9 +84,9 @@
                         class="upload-demo"
                         drag
                         :data="{'pid':pid}"
+                        :http-request="fileChange"
                         :action="UPLOAD_FILE"
                         :multiple="true"
-                        :on-preview="previewList"
                         :file-list="fileList"
                         :on-success="uploadSuccess"
                         >
@@ -247,6 +247,7 @@ export default {
         }
       });
     },
+    
     // 批量文件上传成功回调
     uploadSuccess(res, file) {
       if ((res.Code = 200)) {
@@ -295,17 +296,16 @@ export default {
           updatetime: res.Data.Updatetime,
           deleted: 0
         };
-        this.$post("AsFilelistSave", post_data).then(res => {
-          if (res.Code == 200) {
-            this.$showMsgTip("上传成功");
-          }
-        });
+        // this.$post("AsFilelistSave", post_data).then(res => {
+        //   if (res.Code == 200) {
+        //     this.$showMsgTip("上传成功");
+        //   }
+        // });
       }
     },
     // 上传的改变事件
     fileChange(file){
       this.currentChunk=0;
-      // this.files = file[0];
       this.files = file.file
       if(this.uploadeFileName == this.files.name){
         return false;
@@ -345,11 +345,10 @@ export default {
     },
     // fromSub
     fromSubmitFn(){
-       let data = new FormData()
+        let data = new FormData()
         data.append("file", this.files)
         data.append("pid", this.dataObj.pid)
         data.append("md5",this.dataObj.md5);
-        console.log(this.dataObj)
       fetch(`https://mt.guoanfamily.com/asmanage/HbfileSave`,{
         method: 'post',
         dataType: "json",
@@ -357,8 +356,12 @@ export default {
       }).then((res)=>{
         return res.json();
       }).then(res=>{
-      console.log(res);
-        this.singleUpLoadSuccess(res,this.files)
+        if(this.titleName == '添加'){
+          this.singleUpLoadSuccess(res,this.files);
+        }else{
+          this.uploadSuccess(res,this.files);
+        }
+        
       })
     },
     // 单一文件上传
@@ -438,18 +441,34 @@ export default {
           updatetime: this.SelectionChangeArr[0].updatetime,
           deleted: this.SelectionChangeArr[0].deleted
         };
+        this.dialogVisible = false;
+        this.fileListArr = [];
+        this.fromData.fileName = "";
+        this.fromData.fileType = "";
+        this.$post("AsFilelistSave", this.post_data).then(res => {
+          if (res.Code == 200) {
+            this.$showMsgTip("保存成功");
+            this.pageLoad(this.pid);
+          }
+        });
+      }
+      if(this.titleName == "添加"){
+        this.dialogVisible = false;
+        this.fileListArr = [];
+        this.fromData.fileName = "";
+        this.fromData.fileType = "";
+        this.$post("AsFilelistSave", this.post_data).then(res => {
+          if (res.Code == 200) {
+            this.$showMsgTip("保存成功");
+            this.pageLoad(this.pid);
+          }
+        });
+      }
+      if(this.titleName == '批量上传'){
+         this.dialogVisible = false;
+         this.fileList = [];
       }
       
-      this.dialogVisible = false;
-      this.fileListArr = [];
-      this.fromData.fileName = "";
-      this.fromData.fileType = "";
-      this.$post("AsFilelistSave", this.post_data).then(res => {
-        if (res.Code == 200) {
-          this.$showMsgTip("保存成功");
-          this.pageLoad(this.pid);
-        }
-      });
     },
     // 文件下载
     smallBtnClick(item) {
@@ -473,7 +492,7 @@ export default {
       this.titleName = "批量上传";
       this.dialogVisible = true;
     },
-    previewList(file) {},
+
     AddData() {
       this.titleName = "添加";
       this.dialogVisible = true;
