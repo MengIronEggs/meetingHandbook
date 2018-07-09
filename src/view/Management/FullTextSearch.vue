@@ -72,6 +72,7 @@ export default {
     margin-top: 20px;
 }
 .searchContent{
+    
     width:85%;
     line-height: 30px;
     font-size: 16px;
