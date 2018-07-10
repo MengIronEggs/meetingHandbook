@@ -83,7 +83,7 @@
                     <el-upload
                         class="upload-demo"
                         drag
-                        :data="{'pid':pid}"
+                        :data="dataObj"
                         :http-request="fileChange"
                         :action="UPLOAD_FILE"
                         :multiple="true"
@@ -198,11 +198,11 @@ export default {
       files:[],
       currentChunk:0,
       uploadeFileName:'',
-      // Filemd5:'',
       dataObj:{
         pid:'',
         md5:'',
-      }
+      },
+      filess:[],
     };
   },
   methods: {
@@ -296,24 +296,26 @@ export default {
           updatetime: res.Data.Updatetime,
           deleted: 0
         };
-        // this.$post("AsFilelistSave", post_data).then(res => {
-        //   if (res.Code == 200) {
-        //     this.$showMsgTip("上传成功");
-        //   }
-        // });
+        this.$post("AsFilelistSave", post_data).then(res => {
+          if (res.Code == 200) {
+            this.$showMsgTip("上传成功");
+          }
+        });
       }
     },
     // 上传的改变事件
     fileChange(file){
+   
       this.currentChunk=0;
       this.files = file.file
       if(this.uploadeFileName == this.files.name){
         return false;
       }
       this.uploadeFileName = this.files.name;
+      
       let chunkSize =2097152;
       this.chunks = Math.ceil(this.files.size / chunkSize);
-      this.onFileload();
+      this.onFileload(file.file);
       this.loadNext();
     },
     loadNext() {
@@ -323,7 +325,7 @@ export default {
       var	end = ((start + chunkSize) >=  this.files.size) ? this.files.size : start + chunkSize;
       this.fileReader.readAsArrayBuffer(this.blobSlice.call(this.files, start, end));
     },
-    onFileload(){
+    onFileload(file){
           this.fileReader = new FileReader();
           this.fileReader.onload = (e)=> {
             this.spark.append(e.target.result); // Append array buffer
@@ -331,12 +333,9 @@ export default {
             if(this.currentChunk < this.chunks) {
                 this.loadNext();
             } else {
-              // this.Filemd5 = this.spark.end();
-              // console.log( this.Filemd5);
               this.dataObj.pid = this.$route.query.pid;
               this.dataObj.md5 = this.spark.end();
-              // console.log(this.dataObj);
-              this.fromSubmitFn();
+              this.fromSubmitFn(file);
             }
           };
           this.fileReader.onerror = function() {
@@ -344,9 +343,10 @@ export default {
           };
     },
     // fromSub
-    fromSubmitFn(){
+    fromSubmitFn(file){
+      // console.log(file.name,this.dataObj.md5)
         let data = new FormData()
-        data.append("file", this.files)
+        data.append("file", file)
         data.append("pid", this.dataObj.pid)
         data.append("md5",this.dataObj.md5);
       fetch(`https://mt.guoanfamily.com/asmanage/HbfileSave`,{
@@ -467,6 +467,7 @@ export default {
       if(this.titleName == '批量上传'){
          this.dialogVisible = false;
          this.fileList = [];
+         this.pageLoad(this.pid);
       }
       
     },
