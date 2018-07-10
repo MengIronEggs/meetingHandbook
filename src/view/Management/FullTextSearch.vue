@@ -42,10 +42,11 @@ export default {
     //   点击下载
       searchDownloadClick(item){
           window.location.href = item.doc_link;
-      }
+      },
+   
   },
   mounted(){
-
+    
   }
 };
 </script>
