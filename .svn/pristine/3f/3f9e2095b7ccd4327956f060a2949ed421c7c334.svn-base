@@ -10,23 +10,11 @@
         <div class="content">
             <!-- 操作区 -->
             <div class="button_Box">
-                <el-button type="primary" @click="AddData">添加</el-button>
-                <el-button type="info" :disabled="SelectionChangeArr.length!=1" @click="EditData">编辑</el-button>
-                <el-button type="danger" @click="delectCLick">删除</el-button>
-                <el-button type="primary" @click="PushUp">批量导入</el-button>
-                <el-button type="info" @click="bacchExportClick">批量导出</el-button>
-                <!-- <el-button  @click.native="newFloderClick" icon="el-icon-circle-plus-outline">新建文件夹</el-button> -->
-                <el-button type="primary" @click="newFloderClick">新建文件夹</el-button>
-                <!-- 批量操作文件的时候 -->
-                <el-popover
-                      placement="bottom"
-                      width="100"
-                      trigger="click"
-                  >
-                  <div @click="batchMoveClick" class="moreContent">移动到</div>
-                  <div @click="delectCLick" class="moreContent">删除</div>
-                      <el-button v-show="SelectionChangeArr.length>1" slot="reference"  class="FolderButton" icon="el-icon-more">更多</el-button>
-                </el-popover>
+                 <el-button type="primary" @click="AddData">添加</el-button>
+                 <el-button type="info" :disabled="SelectionChangeArr.length!=1" @click="EditData">编辑</el-button>
+                 <el-button type="danger" @click="delectCLick">删除</el-button>
+                 <el-button type="primary" @click="PushUp">批量导入</el-button>
+                 <el-button type="info" @click="bacchExportClick">批量导出</el-button>
                 <el-input
                     class="SearchInput"
                     placeholder="请输入文件名称"
@@ -34,13 +22,6 @@
                     <el-button slot="append" icon="el-icon-search" @click="searchClick"></el-button>
                 </el-input>
             </div>
-            <!-- 文件层级面包屑 -->
-            <div style="width:100%;height:40px;">
-              <div class="bigCrum" :key="index" v-for="(item,index) in CrumbsArr" @click="fileCrumClick(item,index)">
-                <span :class="{crumbsArrFontColor:CrumbsArr.length-1 !== index}" v-show="index >= 1">/</span>
-                <span :class="{crumbsArrFontColor:CrumbsArr.length-1 !== index}">{{item.titleName}}</span>
-              </div>
-            </div> 
             <!-- 表格 -->
             <div class="tables">
                 <template>
@@ -58,21 +39,15 @@
                         <el-table-column
                             fixed
                             label="名称"
-                            width="300"
-                            align="left">
+                            align="center">
                              <template slot-scope="scope">
-                               <div v-show="scope.row.filetype !== '文件夹'">
-                                <img style="margin-top:5px;float:left;" :src="scope.row.imgIcon" alt="">
-                                <el-button style="margin-left:5px;" type="text" @click="smallBtnClick(scope.row)">{{scope.row.filename}}</el-button>
-                               </div>
-                                <div v-show="scope.row.filetype == '文件夹'">
-                                  <img style="margin-top:5px;float:left;" src="../../../static/Folderimg/floder.png" alt="">
-                                  <el-input v-show="scope.row.showInput"  class="FolderNameInput" v-model="scope.row.filename" placeholder="输入文件夹名称" clearable></el-input>
-                                  <img v-show="scope.row.showInput" class="iconImg" @click="confirmClick(scope)"  src="../../../static/Folderimg/confirm.png" alt="">
-                                  <img v-show="scope.row.showInput" class="iconImg"  src="../../../static/Folderimg/cancel.png" alt="">
-                                  <div @click="folderClick(scope)" v-show="!scope.row.showInput" style="width:150px;height:40px;line-height:40px;margin-left:5px;float:left;text-align:left;">{{scope.row.filename}}</div>
-                                </div>
+                                 <el-button type="text" @click="smallBtnClick(scope.row)">{{scope.row.filename}}</el-button>
                              </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="filetype"
+                            align="center"
+                            label="类型">
                         </el-table-column>
                         <el-table-column
                             prop="updatetime"
@@ -97,23 +72,6 @@
                                 </el-rate>
                             </template>
                         </el-table-column>
-                        <el-table-column
-                            align="center"
-                            width="180"
-                            label="更多">
-                            <template slot-scope="scope">
-                                <el-popover
-                                    placement="bottom"
-                                    width="100"
-                                    trigger="click"
-                                >
-                                <div @click="moveClick(scope)" class="moreContent">移动到</div>
-                                <div @click="renameClick(scope)" class="moreContent">重命名</div>
-                                <div @click="removeFileCLick(scope)" class="moreContent">删除</div>
-                                    <el-button v-show="SelectionChangeArr.length<=1" slot="reference"  class="FolderButton" icon="el-icon-more"></el-button>
-                                </el-popover>
-                            </template>
-                        </el-table-column> 
                     </el-table>
                 </template>
             </div>
@@ -176,51 +134,16 @@
                     <el-button type="primary" @click="subClick">确 定</el-button>
                 </div>
             </el-dialog>
-            <!-- 文件夹移动弹窗 -->
-            <el-dialog title="选择地址" v-if="MoveDialogVisible" :visible.sync="MoveDialogVisible" >
-                <el-tree 
-                :data="TreeData" 
-                
-                node-key="id"
-                ref="tree"
-                @node-click="AdminGetCurrentKey"
-                :highlight-current= true
-                :props="defaultProps" ></el-tree>
-                <div slot="footer" class="dialog-footer">
-                    <el-button type="danger">取 消</el-button>
-                    <el-button type="primary" @click="moveSubClick" >确 定</el-button>
-                </div>
-            </el-dialog>
-            <!-- show-checkbox -->
         </div>
 
     </div>
 </template>
 
 <script>
-import folder from "../../../static/Folderimg/floder.png";
-import iconImg from "../../../static/Folderimg/iconImg.png";
-import wordImg from "../../../static/Folderimg/wordImg.png";
-import pdfImg from "../../../static/Folderimg/pdfImg.png";
-import mp3Img from "../../../static/Folderimg/mp3Img.png";
-import mp4Img from "../../../static/Folderimg/mp4Img.png";
-import exelImg from "../../../static/Folderimg/exelImg.png";
-import zipImg from "../../../static/Folderimg/zipImg.png";
-import noTypeImg from "../../../static/Folderimg/noTypeImg.png";
 export default {
   data() {
     return {
       pid: 0,
-      fid:0,
-      CrumbsArr:[],
-      TreeData:[],
-      defaultProps: {
-          children: 'children',
-          label: 'label'
-        },
-      MoveDialogVisible:false,
-      MoveArr:[],
-      targetId:0,
       totalNum: 0,
       menuIndex: this.$store.state.attribute.menuBtnIndex,
       breadArr: [
@@ -284,27 +207,38 @@ export default {
   },
   methods: {
     // 数据加载方法
-    pageLoad(pid,fid) {
-      // /GetAsFilelistByPidFolder?pid=?&fid=?
-      // this.$get(`GetAsFilelistWhere?cond=pid&arg=${pid}`).then(res => {
-      this.$get(`GetAsFilelistByPidFolder?pid=${pid}&fid=${this.fid}`).then(res => {
+    pageLoad(pid) {
+      this.$get(`GetAsFilelistWhere?cond=pid&arg=${pid}`).then(res => {
         if (res.Code == 200) {
           for (let i = 0; i < res.Data.length; i++) {
             let data = new Date(res.Data[i].updatetime).Format("yyyy-MM-dd");
             res.Data[i].updatetime = data;
-            if(res.Data[i].filetype == '文档'){
-              res.Data[i].imgIcon =  wordImg;
-            }else if(res.Data[i].filetype == '图片'){
-              res.Data[i].imgIcon =  iconImg;
-            }else if(res.Data[i].filetype == '音频'){
-              res.Data[i].imgIcon =  mp3Img;
-            }else if(res.Data[i].filetype == '视频'){
-              res.Data[i].imgIcon =  mp4Img;
-            }else if(res.Data[i].filetype == '文件夹'){
-              res.Data[i].imgIcon = folder;
-              res.Data[i].showInput = false;
-            }else{
-              res.Data[i].imgIcon = noTypeImg;
+            if (res.Data[i].filetype == "png" || res.Data[i].filetype == "jpg") {
+              res.Data[i].filetype = "图片";
+            } else if (
+              res.Data[i].filetype == "pdf" ||
+              res.Data[i].filetype == "xls" ||
+              res.Data[i].filetype == "doc" ||
+              res.Data[i].filetype == "xlsx" ||
+              res.Data[i].filetype == "txt" ||
+              res.Data[i].filetype == "docx"
+            ) {
+              alert(1234);
+              res.Data[i].filetype = "文档";
+            } else if (
+              res.Data[i].filetype == "MP3" ||
+              res.Data[i].filetype == "mp3" ||
+              res.Data[i].filetype == "wav" ||
+              res.Data[i].filetype == "mid"
+            ) {
+              res.Data[i].filetype = "音频";
+            } else if (
+              res.Data[i].filetype == "avi" ||
+              res.Data[i].filetype == "mp4" ||
+              res.Data[i].filetype == "MP4" ||
+              res.Data[i].filetype == "ram"
+            ) {
+              res.Data[i].filetype = "视频";
             }
           }
 
@@ -313,120 +247,7 @@ export default {
         }
       });
     },
-    // 文件面包屑的点击事件
-    fileCrumClick(item,index){
-      this.fid = item.fid;
-      this.pageLoad(item.pid,this.fid);
-      this.CrumbsArr =  this.CrumbsArr.splice(0,index+1);
-    },
-    //新建文件夹的点击事件
-    newFloderClick(){
-      let obj = {};
-      obj.createtime = "";
-      obj.undatetime = "";
-      obj.deleted = 0;
-      obj.downloadcount = 0;
-      obj.fileid = 0;
-      obj.folderid = 0;
-      obj.filetype =  '文件夹';
-      obj.filename = "";
-      obj.id = 0;
-      obj.pid = parseInt(this.$route.query.pid);
-      obj.rating = 0;
-      obj.showInput = true;
-      this.tableData.unshift(obj);
-    },
-    // 确认创建文件夹的点击事件
-    confirmClick(scope){
-      let post_data = {
-        id: scope.row.id,
-        pid: scope.row.pid,
-        filename: scope.row.filename,
-        filetype: scope.row.filetype,
-        fileid:scope.row.fileid,
-        downloadcount: scope.row.downloadcount,
-        folderid:this.fid,
-        rating: scope.row.rating,
-        deleted: scope.row.deleted
-      }
-      if(scope.row.filename){
-        this.$post("AsFilelistSave", post_data).then(res => {
-          if (res.Code == 200) {
-            this.$showMsgTip("保存成功");
-            this.pageLoad(this.pid,this.fid);
-          }
-        });
-      }else{
-        this.$showErrorTip('请输入文件夹名称');
-      }
-    },
-    // 获取选择的树的key的方法(行政权限树)
-    AdminGetCurrentKey(one,two,three) {
-      // console.log(one,two,three);
-      this.targetId = one.id;
-    },
-    // 移动确定的点击事件
-    moveSubClick(){
-      let ids =  this.MoveArr.join(',');
-      this.$get(`AsFileMove?ids=${ids}&fid=${this.targetId}`).then(res => {
-        if(res.Code == 200){
-          this.$showMsgTip("设置成功");
-          this.MoveDialogVisible =  false;
-          this.pageLoad(this.pid,this.fid);
-        }
-      })
-    },
-    // 移动的点击事件
-    moveClick(scope){
-      this.MoveArr.push(scope.row.id);
-      this.MoveDialogVisible = true;
-      // /GetAsFTree
-      this.$get(`GetAsFTree`).then(res =>{
-        if(res.Code == 200){
-          this.TreeData = res.Data;
-        }
-         
-      });
-    },  
-    // 批量移动个点击事件
-    batchMoveClick(){
-      this.MoveArr = this.SelectionChangeArr.map(item=>{
-        return item.id;
-      })
-      this.MoveDialogVisible = true;
-      this.$get(`GetAsFTree`).then(res =>{
-        if(res.Code == 200){
-          this.TreeData = res.Data;
-        }
-      });
-    },
-    // 重命名的点击事件
-    renameClick(scope){
-      scope.row.showInput = true;
-    },
-    // 删除的点击事件
-    removeFileCLick(scope){
-      let ids = scope.row.id;
-      this.$get(`AsFileBatchDelete?ids=${ids}`).then(res =>{
-        if(res.Code == 200){
-          this.$showMsgTip("删除成功");
-          this.pageLoad(this.pid,this.fid);
-        }
-      })
-    },
-    // 文件夹的点击事件
-    folderClick(scope){
-      this.fid = scope.row.id;
-      let href = window.location.href;
-      // window.location.href = href + "&fid=" + this.fid;
-      this.pid = scope.row.pid;
-      let obj = {};
-      obj.titleName = scope.row.filename;
-      obj.pid = this.pid;
-      obj.fid = this.fid;
-      this.CrumbsArr.push(obj);
-      this.pageLoad(this.pid,this.fid);
-    },
+    
     // 批量文件上传成功回调
     uploadSuccess(res, file) {
       if ((res.Code = 200)) {
@@ -598,7 +419,6 @@ export default {
             filetype: this.fromData.fileType,
             fileid: res.Data.Id,
             downloadcount: 0,
-            folderid:this.fid,
             rating: 0,
             createtime: res.Data.Createtime,
             updatetime: res.Data.Updatetime,
@@ -628,7 +448,7 @@ export default {
         this.$post("AsFilelistSave", this.post_data).then(res => {
           if (res.Code == 200) {
             this.$showMsgTip("保存成功");
-            this.pageLoad(this.pid,this.fid);
+            this.pageLoad(this.pid);
           }
         });
       }
@@ -640,14 +460,14 @@ export default {
         this.$post("AsFilelistSave", this.post_data).then(res => {
           if (res.Code == 200) {
             this.$showMsgTip("保存成功");
-            this.pageLoad(this.pid,this.fid);
+            this.pageLoad(this.pid);
           }
         });
       }
       if(this.titleName == '批量上传'){
          this.dialogVisible = false;
          this.fileList = [];
-         this.pageLoad(this.pid,this.fid);
+         this.pageLoad(this.pid);
       }
       
     },
@@ -724,7 +544,7 @@ export default {
       this.$get(`AsFileBatchDelete?ids=${ids}`).then(res =>{
         if(res.Code == 200){
           this.$showMsgTip("删除成功");
-          this.pageLoad(this.pid,this.fid);
+          this.pageLoad(this.pid);
         }
       })
     },
@@ -737,64 +557,32 @@ export default {
   components: {},
   created() {
     this.pid = this.$route.query.pid;
-    this.fid = this.$route.query.fid;
-    this.pageLoad(this.pid,this.fid);
-    let obj = {};
-    obj.titleName = '全部文件',
-    obj.pid = this.pid,
-    obj.fid = this.fid,
-    this.CrumbsArr.push(obj);
+    this.pageLoad(this.pid);
   },
   mounted() {},
   computed: {
     menuBtnIndex() {
       return this.menuIndex.id;
     },
-    mdtNum(){},
+    mdtNum(){
+      
+    }
   },
   watch: {
     menuBtnIndex() {
-      this.pageLoad(this.menuIndex.id,this.fid);
+      this.pageLoad(this.menuIndex.id);
     },
   }
 };
 </script>
 
 <style scoped lang="less">
-.bigCrum{
-  line-height:40px;float:left;width:auto;margin-left:5px;font-size:14px;
-}
-.crumbsArrFontColor{
-  color:#409eff;
-}
-.FolderNameInput {
-    width: 150px;
-    margin-left: 10px;
-    float: left;
-  }
-.moreContent {
-  width: 100%;
-  height: 30px;
-  font-size: 12px;
-  color: #606266;
-  line-height: 30px;
-  text-align: center;
-}
-.moreContent:hover {
-  color: #409eff;
-}
 .AdministrationEdit {
   position: relative;
   height: 100%;
   overflow: auto;
   padding-top: 30px;
 }
-.iconImg {
-    width: 20px;
-    float: left;
-    margin-top: 10px;
-    margin-left: 10px;
-  }
 .bread {
   position: absolute;
   top: 0;

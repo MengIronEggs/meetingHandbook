@@ -12,7 +12,26 @@
                 <div class="searchTime">{{item.createtime}}</div>
             </div>
         </div>
-        
+        <!-- <el-button  @click.native="newFloderClick" icon="el-icon-circle-plus-outline">新建文件夹</el-button>
+        <ul style="margin-top:40px;">
+            <li style="list-style:none;" :key="index" v-for="(item,index) in floderArr">
+                <div class="ListFolder">
+                    <img class="FolderImg" src="../../../static/Folderimg/floder.png" alt="">
+                    <el-input class="FolderNameInput" v-model="item.floderName" placeholder="输入文件夹名称" clearable></el-input>
+                    <img class="iconImg" @click="addFolderClick(item)" src="../../../static/Folderimg/confirm.png" alt="">
+                    <img class="iconImg" @click="deleteClick"  src="../../../static/Folderimg/cancel.png" alt="">
+                    <el-popover
+                        placement="bottom"
+                        width="100"
+                        trigger="click"
+                    >
+                    <div class="moreContent">one</div>
+                    <div class="moreContent">two</div>
+                        <el-button slot="reference" @click.native="moreClick(index)" class="FolderButton" icon="el-icon-more"></el-button>
+                    </el-popover>
+                </div>
+            </li>
+        </ul> -->
     </div>
 </template>
 
@@ -22,10 +41,33 @@ export default {
     return {
       searchText: "",
       searchResultArr: [],
-      
+      floderArr: [],
+      showMore: null
     };
   },
   methods: {
+    //   按钮的点击事件
+    newFloderClick() {
+      let obj = {};
+      obj.floderName = "";
+      this.floderArr.push(obj);
+    },
+    // 确认添加文件夹的点击事件
+    addFolderClick(item) {
+      if(item.floderName){
+        
+      }else{
+        this.$showErrorTip('请输入文件夹名称');
+      };
+    },
+    //删除文件夹图标的点击事件
+    deleteClick() {
+      this.floderArr.splice(this.floderArr.length-1,1);
+    },
+    // 更多的点击事件
+    moreClick(index) {
+      this.showMore = index;
+    },
     //   搜索数据
     InputSearchClick() {
       if (this.searchText) {
