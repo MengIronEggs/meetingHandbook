@@ -6,8 +6,10 @@
                     <router-link to="/">
                         <img class="logo" src="../static/Main/logo.png">
                     </router-link>
-                    <span class="logout" @click="logout">退出</span>
-                    <span class="logout" @click="changePasswd">修改密码</span>
+                    <span v-show="showTopExit" class="logout " @click="logout">退出</span>
+                    <span v-show="showTopExit" class="logout" @click="changePasswd">修改密码</span>
+                    <span v-show="showTopExit" class="logout">部门:{{Infomation.company}}</span>
+                    <span v-show="showTopExit" class="logout">姓名:{{Infomation.name}}</span>
                     <span class="timer">{{sysDate}}</span>
                 </header>
             </el-header>
@@ -105,6 +107,7 @@ export default {
   },
   methods: {
     logout() {
+      this.$store.state.attribute.isShowExit = false;
       window.sessionStorage.clear();
       this.$router.push("/login");
     },
@@ -153,6 +156,25 @@ export default {
         this.isRady = false;
       } else {
         this.isRady = true;
+      }
+    }
+  },
+  computed:{
+    showTopExit(){
+      if(window.sessionStorage.getItem('USER_ID')){
+        this.$store.state.attribute.isShowExit = true;
+      }
+      return  this.$store.state.attribute.isShowExit;
+    },
+    Infomation(){
+      if(this.$route.path !== '/' && this.$route.path !== '/login' ){
+        let userInfo = JSON.parse(window.sessionStorage.getItem("USER_INFO"));
+        return userInfo;
+      }else{
+        let obj = {};
+        obj.name = '';
+        obj.company = '';
+        return obj;
       }
     }
   }

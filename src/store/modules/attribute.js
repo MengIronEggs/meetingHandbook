@@ -1,5 +1,6 @@
 export default {
     state: {
+        isShowExit:false,
         objectType: '', //entry  carousel
         entryArray: [], //入口列表
         entryIndex: 0, //入口序号

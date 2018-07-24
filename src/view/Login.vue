@@ -220,7 +220,7 @@
                         }).then(res => {
 
                             if(res.Code === 200 && res.Data){
-
+                                this.$store.state.attribute.isShowExit = true;
                                 this.$setSession(this.KEYS.USER_ID, res.Data.Id);
                                 this.$setSession(this.KEYS.USER_INFO, res.Data);
 
