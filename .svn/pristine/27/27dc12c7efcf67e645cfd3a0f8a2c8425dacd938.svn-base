@@ -1,5 +1,5 @@
 <template>
-    <div class="dailyFirst">
+    <div>
         <div class="container">
             <!-- 左边部分 -->
             <div class="page">
@@ -83,17 +83,9 @@
                   </div>
                   <!-- 公司属性 -->
                   <div v-if="formType === 'company'">
-                    <div class="company-dt" v-if="this.showDtList.length !== 0 && isDisable02">
-                      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" active-text-color="#409EFF" @select="handleSelect">
-                        <el-menu-item v-for="(item, i) in this.showDtList" :key="i" :index="(i + 1 + '')" >{{item.departname}}</el-menu-item>
-                      </el-menu>
-                    </div>
                       <el-form label-width="80px">
-                        <el-form-item label="公司名称" v-if="this.showDtList.length === 0">
+                        <el-form-item label="公司名称">
                               <el-input :disabled="true"  v-model="companyname" placeholder="公司名称"></el-input>
-                        </el-form-item>
-                         <el-form-item v-else label="部门名称">
-                              <el-input :disabled="true"  v-model="departname" placeholder="部门名称"></el-input>
                         </el-form-item>
                         <el-form-item label="管理人">
                           <div class="page1-box">
@@ -180,7 +172,7 @@
                         </div>
                       </el-form>
                       <el-button style="margin-left:40px;width:50%;margin-top:20px;" :disabled="isDisabled01" type="primary" size="small" @click= 'exitClcik'>编辑</el-button>
-                      <el-button style="margin-left:40px;width:50%;margin-top:20px;" type="primary" size="small" @click= 'JurisdictionClick(false)'>保存</el-button>
+                      <el-button style="margin-left:40px;width:50%;margin-top:20px;" type="primary" size="small" @click= 'JurisdictionClick'>保存</el-button>
                   </div>
             </div>
         </div>
@@ -211,7 +203,6 @@ export default {
       // 公司名称
       companyname: "",
       // 公司ID
-      companyId: '',
       dailyclass: "",
       // 属性区部分字段名称
       username: "", //管理人姓名
@@ -226,12 +217,6 @@ export default {
       modelCheck: "", //是否限制查看
       listData: null,
       isDisabled01: false,
-      activeIndex: '1',
-      dtList: [],
-      showDtList: [],
-      departname: '', // 部门名称
-      departItemData: {}, // 选中的具体部门
-      isDisable02: true,
     };
   },
   methods: {
@@ -317,17 +302,7 @@ export default {
           //获取列表数组
           this.companyListArr = res.Data;
           // 默认筛选第一栏tab对应公司
-          console.log('',this.tabArr[0]);
-          this.colRowClick(0, this.tabArr[0]);
-        }
-      });
-    },
-     // 获取部门列表接口
-    departmentLoadInfo() {
-      this.$get(`GetAsDailydepartdictWhere`).then(res => {
-        if (res.Code == 200 && res.Data) {
-          // 获取tab栏的按钮
-          this.dtList = res.Data || [];
+          this.colRowClick(0, "行政综合");
         }
       });
     },
@@ -348,24 +323,22 @@ export default {
     },
     // 公司的点击事件
     CompanyClick(index, item) {
-      // console.log(item,9999)
       this.namePhone = '';
       this.tableShow =  false;
       this.tableShow1 =  false;
       this.companyActive = index;
       this.formType = "company";
       this.companyname = item.companyname;
-      this.companyId = item.id
       this.dailyclass = item.dailyclass;
       this.listData = item;
       this.showUserName = item.username;
       this.userid = item.userid;
-      if (item.dailyprop && item.dailyprop !== '""' && item.dailyprop.indexOf("{") == 0 && JSON.parse(item.dailyprop).allPeopleArr) {
+      if (item.dailyprop && item.dailyprop !== '""') {
         this.allPeopleArr = JSON.parse(item.dailyprop).allPeopleArr;
+        console.log(this.allPeopleArr, 2321)
       } else {
         this.allPeopleArr = [];
       }
-      this.selectDepartment(item.id)
     },
     // 公司下编辑的的点击事件
     exitClcik() {
@@ -387,14 +360,12 @@ export default {
     },
     // 管理人表格的点击事件
     handleCurrentChange(val) {
+      console.log(val,444)
       if (val) {
-        if(this.showUserName && this.showUserName != val.name) {
-        }
         this.showUserName = val.name;
         this.username = ''; //val.name
         this.tableShow = false;
         this.userid = val.id;
-
       }
     },
     // 编辑授权的点击事件
@@ -414,7 +385,6 @@ export default {
     // tag的移除事件
     handleClose(tag) {
       for (let i = 0; i < this.allPeopleArr.length; i++) {
-        // console.log(7777, tag)
         if (tag.name == this.allPeopleArr[i].name) {
           this.allPeopleArr.splice(i, 1);
         }
@@ -430,7 +400,7 @@ export default {
       }
     },
     // 公司保存的点击事件
-    JurisdictionClick(flag) {
+    JurisdictionClick(flag) { 
       if(!this.showUserName){
         this.$showErrorTip('请输入管理人');
         return false;
@@ -443,76 +413,42 @@ export default {
          obj = {};
          obj.allPeopleArr = this.allPeopleArr;
       }else{
-        obj = "";
+        obj = '';
       }
-      // 判断是部门还是公司
-      if(this.showDtList.length !== 0) { // 部门
-        // debugger
-        let post_data = {
-          departname: this.departname,
-          departprop: JSON.stringify(obj),
-          id: parseInt(this.departItemData.id),
-          ddid: this.departItemData.ddid,
-          ordernum: parseInt(this.departItemData.ordernum),
-          updatetime: this.departItemData.updatetime,
-          userid: this.userid,
-          username: this.showUserName,
-        };
-        // if(obj === "") {
-        //   post_data.departprop = obj
-        // } else {
-        //   post_data.departprop = JSON.stringify(obj)
-        // }
-        this.$post(`AsDailydepartdictSave`, post_data).then(res => {
-          if (res.Code == 200) {
-            this.$showMsgTip(`保存成功`);
-            if(flag) {
-              this.$router.push({
-                path: "/companyDetials",
-                query: { companyName: this.companyname, dailyclass: this.dailyclass, departname: this.departname,}
-              });
-            }else{
-              this.init();
-            }
+      let post_data = {
+        companyname: this.companyname,
+        dailyclass: this.dailyclass,
+        dailyprop: JSON.stringify(obj),
+        id: this.listData.id,
+        ordernum: this.listData.ordernum,
+        updatetime: this.listData.updatetime,
+        userid: this.userid,
+        username: this.showUserName
+      };
+      this.$post(`AsDailydictSave`, post_data).then(res => {
+        if (res.Code == 200) {
+          this.$showMsgTip(`保存成功`);
+          if(flag) {
+            this.$router.push({
+              path: "/companyDetials",
+              query: { companyName: this.companyname, dailyclass: this.dailyclass }
+            });
           }
-        });
-      }else { // 公司
-        let post_data = {
-          companyname: this.companyname,
-          dailyclass: this.dailyclass,
-          dailyprop: JSON.stringify(obj),
-          id: this.listData.id,
-          ordernum: this.listData.ordernum,
-          updatetime: this.listData.updatetime,
-          userid: this.userid,
-          username: this.showUserName
-        };
-        this.$post(`AsDailydictSave`, post_data).then(res => {
-          if (res.Code == 200) {
-            this.$showMsgTip(`保存成功`);
-            if(flag) {
-              this.$router.push({
-                path: "/companyDetials",
-                query: { companyName: this.companyname, dailyclass: this.dailyclass }
-              });
-            } else{
-              this.init();
-            }
-          }
-        });
-        // this.$root.reloads();
-      }
+          // this.tabListLoadFn();
+        }
+      });
     },
     // 判断用户是否有权限编辑 (7点之后)
     isUserPermission(userid, arr) {
       var nowDate = new Date()
       var nowH = nowDate.getHours();
-      // console.log(nowH, 23232)
+      console.log(nowH, 23232)
       if(nowH > 19 || nowH < 12) {
         const USER_INFO = JSON.parse(sessionStorage.getItem('USER_INFO'))
         if(USER_INFO) {
           // this.isDisabled01  = (USER_INFO.isadmin === 1 || userid === USER_INFO.Id) ? true : false
           if(this.allPeopleArr.length !== 0) {
+            console.log(1111122, this.allPeopleArr)
             for(var item of this.allPeopleArr){
               if(item.id === userid) {
                 return true
@@ -528,70 +464,16 @@ export default {
         }
       } 
       return true
-    },
-    // 筛选部门
-    selectDepartment(id) {
-      // this.isDisable02 = false
-      // setTimeout(() => {
-      //   this.isDisable02 = true
-      // },10)
-      var arr = [];
-      this.dtList.forEach(item => {
-        if(item.ddid == id) {
-          item.ordernum = item.ordernum + ''
-          arr.push(item)
-        }
-      })
-      this.showDtList = arr;
-      if(arr.length !== 0) {
-        // this.activeIndex = '1'
-        this.$nextTick(() => {
-          this.activeIndex = '1'
-        })
-        this.departname = arr[0].departname
-        this.departItemData = arr[0]
-        this.departDataEcho(arr[0]);
-      }
-      
-    },
-    // 选择具体部门
-    handleSelect(key, keyPath) {
-      var item = this.showDtList[key-1]
-      this.departItemData = item;
-      this.departname = item.departname;
-      this.departDataEcho(item);
-     
-    },
-    // 部门数据回显
-    departDataEcho(item) {
-      this.showUserName = item.username;
-      this.userid = item.userid;
-      //JSON.parse(item.departprop).allPeopleArr
-      if (item.departprop && item.departprop !== '""' && item.departprop.indexOf("{") == 0 && JSON.parse(item.departprop).allPeopleArr) {
-        this.allPeopleArr = JSON.parse(item.departprop).allPeopleArr;
-      } else {
-        this.allPeopleArr = [];
-      }
-    },
-    init() { // 入口
-      this.tabListLoadFn();
-      this.departmentLoadInfo();
     }
   },
   mounted() {
     this.bannerLoadFn();
-    this.init()
+    this.tabListLoadFn();
   }
 };
 </script>
 
 <style lang='less' scoped>
-.dailyFirst{
-  height: 100%;
-  .container{
-    height: 100%;
-  }
-}
 .bigDiv::-webkit-scrollbar {
   display: none;
 }
@@ -765,13 +647,6 @@ ul li {
   }
   .carousel-bottom {
     margin: 40px 0;
-  }
-  .company-dt{
-    // margin-bottom: 10px;
-    margin: 0 0 10px 20px;
-  }
-  .company-dt /deep/ .el-menu-item {
-    padding: 0 10px
   }
 }
 .adminPeople {
