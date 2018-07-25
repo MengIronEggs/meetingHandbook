@@ -16,7 +16,21 @@
                     </el-menu-item>
                 <!-- </router-link> -->
                   <!-- <router-link to="/ComprehensiveSearch"> -->
-                    <el-menu-item @click.native="searchClick" index="5">
+                    
+                <!-- </router-link> -->
+                <el-submenu index="2" @click.native="titleClick">
+                    <template slot="title" >
+                        <i class="el-icon-setting" :class="{'oSpan': activeColor}"></i>
+                        <span :class="{'oSpan': activeColor}">行政综合</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item @click.native.stop="listClick(item)" :key="index1" :index="item.productname" v-for="(item,index1) in menuArr" >
+                          <img style="width:20px;margin-left:5px;" :src="item.producticon" alt="">
+                          <span>{{item.productname}}</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-menu-item @click.native="searchClick" index="5">
                         <i class="el-icon-search"></i>
                         <span slot="title">综合搜索</span>
                     </el-menu-item>
@@ -26,19 +40,6 @@
                         <i class="el-icon-search"></i>
                         <span slot="title">全文检索</span>
                     </el-menu-item>
-                <!-- </router-link> -->
-                <el-submenu index="2" @click.native="titleClick">
-                    <template slot="title" >
-                        <i class="el-icon-setting" :class="{'oSpan': activeColor}"></i>
-                        <span :class="{'oSpan': activeColor}">综合行政</span>
-                    </template>
-                    <el-menu-item-group>
-                        <el-menu-item @click.native.stop="listClick(item)" :key="index1" :index="item.productname" v-for="(item,index1) in menuArr" >
-                          <img style="width:20px;margin-left:5px;" :src="item.producticon" alt="">
-                          <span>{{item.productname}}</span>
-                        </el-menu-item>
-                    </el-menu-item-group>
-                </el-submenu>
                  <!-- <router-link to="/dailyfirst"> -->
                     <el-menu-item @click.native="dailyClick" index="4">
                         <i class="el-icon-view"></i>
