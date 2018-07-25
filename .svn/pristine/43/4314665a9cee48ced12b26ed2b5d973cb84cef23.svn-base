@@ -6,16 +6,16 @@
                     <router-link to="/">
                         <img class="logo" src="../static/Main/logo.png">
                     </router-link>
-                    <span v-show="showTopExit" class="logout" style='cursor: pointer' @click="changePasswd">修改密码</span>
-                    <div v-show="showTopExit" class="logout" style='cursor: pointer' @click="logout">
+                    <span v-show="showTopExit" class="logout" @click="changePasswd">修改密码</span>
+                    <div v-show="showTopExit" class="logout " @click="logout">
                       <img class="user-head" src="../static/default_close.png"/>
                       退出
                     </div>
                     
-                    <!-- <span v-show="showTopExit" class="logout">部门 - {{Infomation.shortname}}</span> -->
+                    <span v-show="showTopExit" class="logout">部门 - {{Infomation.shortname}}</span>
                     <div v-show="showTopExit" class="logout">
                       <img class="user-head" src="../static/default_user.png"/>
-                      {{Infomation.name}}<span v-show="Infomation.shortname" style="padding:5px;">-</span>{{Infomation.shortname}}
+                      姓名 - {{Infomation.name}}
                     </div>
                     
                     <span class="timer">{{sysDate}}</span>
@@ -169,12 +169,10 @@ export default {
   },
   computed:{
     showTopExit(){
-      if(this.$route.path !== '/' && this.$route.path !== '/login' ){
-        if(window.sessionStorage.getItem('USER_ID')){
-          this.$store.state.attribute.isShowExit = true;
-        }
-        return  this.$store.state.attribute.isShowExit;
+      if(window.sessionStorage.getItem('USER_ID')){
+        this.$store.state.attribute.isShowExit = true;
       }
+      return  this.$store.state.attribute.isShowExit;
     },
     Infomation(){
       if(this.$route.path !== '/' && this.$route.path !== '/login' ){
@@ -261,6 +259,7 @@ html {
   float: right;
   margin-right: 40px;
   font-size: 14px;
+  cursor: pointer;
 }
 p {
   margin: 0;

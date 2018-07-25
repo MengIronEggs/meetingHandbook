@@ -130,32 +130,30 @@ export default {
     },
     // 全文搜索权限控制
     fullTextAdminFn(){
-      if(this.$route.path !== '/' && this.$route.path !== '/login' ){
-        this.$get(`GetAsUserauthWhere?cond=userid&arg=${this.userid}`).then(
-          res => {
-            if (res.Code == 200) {
-              // 首先判断是否为管理员
-              // isShowSearch
-              let USER_INFO = sessionStorage.getItem("USER_INFO");
-              if (USER_INFO) {
-              let isadmin = JSON.parse(USER_INFO).isadmin;
-              if(isadmin == 0){
-                var adminTree = res.Data.filter(item =>{
-                  return item.productid == 129;
-                })
-                if(adminTree.length>0 ){
-                  this.isShowSearch =  true;
-                }else{
-                  this.isShowSearch =  false;
-                }
+      this.$get(`GetAsUserauthWhere?cond=userid&arg=${this.userid}`).then(
+        res => {
+          if (res.Code == 200) {
+            // 首先判断是否为管理员
+            // isShowSearch
+            let USER_INFO = sessionStorage.getItem("USER_INFO");
+            if (USER_INFO) {
+            let isadmin = JSON.parse(USER_INFO).isadmin;
+            if(isadmin == 0){
+              var adminTree = res.Data.filter(item =>{
+                return item.productid == 129;
+              })
+              if(adminTree.length>0 ){
+                this.isShowSearch =  true;
+              }else{
+                this.isShowSearch =  false;
               }
-              
-            
             }
-           }
-         }
-        );
-      }
+            
+          
+          }
+        }
+        }
+      );
     }
   },
   created() {

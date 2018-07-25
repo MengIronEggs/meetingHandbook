@@ -7,9 +7,7 @@
         </div>
         <div style="width:85%;top: 140px;position: fixed;height: 450px;overflow: auto;">
             <div style="width:95%;height:auto;" :key="index" v-for="(item,index) in searchResultArr" >
-                <!-- <div class="searchTitle" @click="searchDownloadClick(item)">{{item.doc_title}}</div> -->
-                <!-- @click="searchDownloadClick(item)" -->
-                <div class="searchTitle" ><a style='display:inline-block;text-decoration:underline;' :href='item.doc_link' target="view_window">{{item.doc_title}}</a></div>
+                <div class="searchTitle" @click="searchDownloadClick(item)">{{item.doc_title}}</div>
                 <div class="searchContent" v-html="item.text"></div>
                 <div class="searchTime">{{item.createtime}}</div>
             </div>
@@ -119,7 +117,7 @@ export default {
   font-size: 18px;
   line-height: 40px;
   font-weight: 500;
-  /* color: #551a8b; */
+  color: #551a8b;
   margin-top: 20px;
   cursor:pointer;
 }
