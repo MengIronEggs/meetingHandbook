@@ -19,13 +19,15 @@
                             </el-carousel>
                         </div>
                         <!-- 文本编辑器 -->
-                        <div @click="chooseTextEditor" ref="reference">
+                        <div @click="chooseTextEditor">
                             <div style="width:100%;height:40px;line-height:40px;font-size:16px;padding-left:10px;">文本编辑</div>
-                            <editor style="border-radius:0;" v-if="!this.departname" @change='updateData'  :content="dailyInfoData.reportcontent" :height="140" :z-index="1000" :auto-height="true" :show-module-name="false"></editor>
-                            <editor style="border-radius:0;" v-else @change='updateData' :content="dailyDepartData.departcontent" :height="140" :z-index="1000" :auto-height="true" :show-module-name="false"></editor>
+                            <editor style="border-radius:0;" v-if="!this.departname" @change="updateData" :content="dailyInfoData.reportcontent" :height="140" :z-index="1000" :auto-height="true" :show-module-name="false"></editor>
+                            <editor style="border-radius:0;" v-else @change="updateData" :content="dailyDepartData.departcontent" :height="140" :z-index="1000" :auto-height="true" :show-module-name="false"></editor>
                         </div>
-                        <!-- <div style="width:100%;height:50px;;"></div> -->
-                        
+                        <div style="width:100%;height:50px;;"></div>
+                        <div class="bottomDiv">
+                            <el-button style="width:50%;" type="primary" @click="saveAndBack">返回</el-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,9 +83,6 @@
                   <div v-if="formType === 'texteditor'" style="width:100%;height:30px;margin-top:60px;">
                         <el-button style="width:50%;" type="primary" @click="saveTextClick">保存</el-button>
                   </div>
-                  <div style="width:100%;height:30px;">
-                      <el-button style="width:50%;margin-top:20px;" type="primary" @click="saveAndBack">返回</el-button>
-                  </div>
             </div>
         </div>
     </div>
@@ -95,7 +94,7 @@ export default {
     return {
       breadArr: [
         { path: "/dailyFirst", name: "日报管理" },
-        { path: "/companyDetials", name: "编辑日报" }
+        { path: "/companyDetials", name: "公司详情" }
       ],
       dailyclass: this.$route.query.dailyclass,
       companyName: this.$route.query.companyName,
@@ -150,7 +149,15 @@ export default {
               this.bannerData.reportclass = item.reportclass;
               this.bannerData.reportcontent = JSON.parse(item.reportcontent);
             }
-           
+            if (item.reporttype == 1) {
+              this.dailyInfoData.id = item.id;
+              this.dailyInfoData.companyname = item.companyname;
+              this.dailyInfoData.reportdate = item.reportdate;
+              this.dailyInfoData.reporttype = item.reporttype;
+              this.dailyInfoData.reportclass = item.reportclass;
+              this.dailyInfoData.reportcontent = item.reportcontent;
+              this.getDepartList(item.id)
+            }
           });
         }
       });
@@ -182,6 +189,7 @@ export default {
     submit(obj, dn) { // dn => detartname 用来判断是否部门保存
       obj.userid = sessionStorage.getItem("USER_ID");
       obj.userid = parseInt(obj.userid);
+
       if(obj.reporttype == 0){
           obj.reportcontent = JSON.stringify(obj.reportcontent);
       }
@@ -195,8 +203,8 @@ export default {
             if (obj.reporttype == 0) {
               obj.departcontent = JSON.parse(obj.reportcontent);
             }
-            // this.PageLoade();
-            this.$showMsgTip(`保存成功`);
+            this.PageLoade();
+            this.$showMsgTip(`操作成功`);
           }
         });
       }else {
@@ -205,51 +213,11 @@ export default {
             if (obj.reporttype == 0) {
               obj.reportcontent = JSON.parse(obj.reportcontent);
             }
-            // this.PageLoade();
-            this.$showMsgTip(`保存成功`);
+            this.PageLoade();
+            this.$showMsgTip(`操作成功`);
           }
         });
       }
-    },
-    addEventFn(){
-      this.$refs.reference.querySelector(".content").addEventListener("paste", this.paste);
-    },
-    paste(oEvent){ 
-      setTimeout(() => {
-          // console.log(this.$refs.reference.querySelector(".content").innerhtm);
-          var newText = this.$refs.reference.querySelector(".content").innerHTML;
-          
-           newText= newText.replace(/style="[^>]*"/g,"");
-           
-           newText= newText.replace(/face="[^>]*"/g,"");
-           console.log(newText);
-          //  newText= newText.replace(/class="[^>]*"/g,"");
-          // newText = newText.replace(/(\r\n)|(\n)/g,'<br>');
-          //  console.log(newText);
-
-           if(this.departname) {
-              this.dailyDepartData.departcontent = newText;
-            }else {
-              this.dailyInfoData.reportcontent = newText;
-            }
-      }, 10);
-    
-      
-
-      //  var evt = document.createEvent("HTMLEvents");
-      // evt.initEvent("onchange", false, true);      
-      //  this.$refs.reference.querySelector(".content").dispatchEvent(evt);
-      
-    },
-    updateData(data) {
-      // console.log("data",data)
-      if(this.departname) {
-        this.dailyDepartData.departcontent = data;
-      }else {
-        this.dailyInfoData.reportcontent = data;
-      }
-       var newText =  this.dailyInfoData.reportcontent;
-        // console.log('===',newText);
     },
     // 移除轮播图的图片
     removeCarouselItem(index) {
@@ -276,8 +244,32 @@ export default {
       this.dailyInfoData.reportdate = this.dateTime;
       this.submit(this.dailyInfoData, this.departname);
     },
-    
-  
+    updateData(data) {
+      if(this.departname) {
+        this.dailyDepartData.departcontent = data;
+      }else {
+        this.dailyInfoData.reportcontent = data;
+      }
+    },
+    // 获取部门列表
+    getDepartList(id) {
+      this.$get(
+        `GetAsDailydepartByDatePid?d=${this.dateTime}&pid=${id}`
+      ).then(res =>{
+        if(res && res.Code === 200 && res.Data) {
+
+          // this.pidDtList = res.Data
+          if(res.Data.length !== 0) {
+            for(var item of res.Data) {
+              if(item.departname === this.departname) {
+                this.dailyDepartData = item
+              }
+            }
+          }
+          
+        }
+      })
+    },
     // 选择文本编辑属性
     chooseTextEditor() {
       this.formType = "texteditor";
@@ -288,7 +280,6 @@ export default {
     }
   },
   mounted() {
-    this.addEventFn();
     //   获取时间
     let date = new Date();
     let year = date.getFullYear();
@@ -298,15 +289,14 @@ export default {
     }
     let day = date.getDate();
     let hours = date.getHours();
-    // if(hours < 12) {
-    //   day = day -1
-    // }
+    if(hours < 12) {
+      day = day -1
+    }
     if(day <= 9){
       day = "0" + parseFloat(day);
     }
-    
+    console.log(hours, day, 34324)
     this.dateTime = year + "-" + month + "-" + day;
-    // console.log(this.dateTime)
     this.PageLoade();
   }
 };
@@ -329,9 +319,9 @@ export default {
   width: 100%;
   height: 45px;
   position: absolute;
-  bottom: 10px;
+  bottom: 0;
   left: 0;
-  text-align:left;
+  text-align: center;
   line-height: 40px;
 }
 .page {

@@ -123,7 +123,6 @@ export default {
       this.$store.state.attribute.isShowExit = false;
       window.sessionStorage.clear();
       this.$router.push("/login");
-      // window.location.href = 'https://mt.guoanfamily.com/manageMentAdmin/#/login'
     },
     changePasswd() {
       const userid = sessionStorage.getItem('USER_ID')

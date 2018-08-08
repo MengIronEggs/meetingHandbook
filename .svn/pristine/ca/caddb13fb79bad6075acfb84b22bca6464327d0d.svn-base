@@ -499,13 +499,13 @@ export default {
         // }
         this.$post(`AsDailydepartdictSave`, post_data).then(res => {
           if (res.Code == 200) {
+            this.$showMsgTip(`保存成功`);
             if(flag) {
               this.$router.push({
                 path: "/companyDetials",
                 query: { companyName: this.companyname, dailyclass: this.dailyclass, departname: this.departname,}
               });
             }else{
-              this.$showMsgTip(`保存成功`);
               this.init();
             }
           }
@@ -523,13 +523,13 @@ export default {
         };
         this.$post(`AsDailydictSave`, post_data).then(res => {
           if (res.Code == 200) {
+            this.$showMsgTip(`保存成功`);
             if(flag) {
               this.$router.push({
                 path: "/companyDetials",
                 query: { companyName: this.companyname, dailyclass: this.dailyclass }
               });
             } else{
-              this.$showMsgTip(`保存成功`);
               this.init();
             }
           }
@@ -542,7 +542,7 @@ export default {
       var nowDate = new Date()
       var nowH = nowDate.getHours();
       // console.log(nowH, 23232)
-      if(nowH > 19) {
+      if(nowH > 19 || nowH < 12) {
         const USER_INFO = JSON.parse(sessionStorage.getItem('USER_INFO'))
         if(USER_INFO) {
           // this.isDisabled01  = (USER_INFO.isadmin === 1 || userid === USER_INFO.Id) ? true : false
@@ -556,7 +556,7 @@ export default {
           if(USER_INFO.isadmin === 1 || USER_INFO.Id === userid) {
             return true
           } else {
-            this.$showErrorTip("此时间暂时不能编辑");
+            this.$showErrorTip("已经过了编辑时间，此时间暂时不能编辑");
             return false
           }
         }

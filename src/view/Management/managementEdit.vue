@@ -46,7 +46,7 @@ export default {
           }
           return this.$store.state.attribute.menuArr;
         });
-        // console.log('chulaildk',this.$store.state.attribute.menuArr);
+        
         // 获取轮播图
         res.Data.map(item => {
           if (item.producttype == 0) {

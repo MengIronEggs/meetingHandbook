@@ -10,26 +10,33 @@
                 :router="true"
                 >
                 <!-- <router-link to="/main"> -->
-                    <el-menu-item @click.native="meettingClick" index="1">
-                        <i class="el-icon-menu"></i>
-                        <span slot="title">会议手册</span>
-                    </el-menu-item>
+                    
                 <!-- </router-link> -->
                   <!-- <router-link to="/ComprehensiveSearch"> -->
                     
                 <!-- </router-link> -->
-                <el-submenu index="2" @click.native="titleClick">
+                <!-- <el-submenu index="2" @click.native="titleClick">
                     <template slot="title" >
                         <i class="el-icon-setting" :class="{'oSpan': activeColor}"></i>
                         <span :class="{'oSpan': activeColor}">行政综合</span>
-                    </template>
-                    <el-menu-item-group>
+                    </template> -->
+                    <!-- <el-menu-item-group>
                         <el-menu-item @click.native.stop="listClick(item)" :key="index1" :index="item.productname" v-for="(item,index1) in menuArr" >
                           <img style="width:20px;margin-left:5px;" :src="item.producticon" alt="">
                           <span>{{item.productname}}</span>
                         </el-menu-item>
-                    </el-menu-item-group>
-                </el-submenu>
+                    </el-menu-item-group> -->
+                <!-- </el-submenu> -->
+                <el-menu-item @click.native="meettingClick" index="1">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">会议手册</span>
+                </el-menu-item>
+                <el-menu-item index="2" @click.native="titleClick">
+                   <template slot="title" >
+                        <i class="el-icon-setting" :class="{'oSpan': activeColor}"></i>
+                        <span :class="{'oSpan': activeColor}">行政综合</span>
+                    </template>
+                </el-menu-item>
                 <el-menu-item @click.native="searchClick" index="5">
                         <i class="el-icon-search"></i>
                         <span slot="title">综合搜索</span>
@@ -180,7 +187,27 @@ export default {
   },
   computed: {
     menuArr() {
-      return this.$store.state.attribute.menuArr;
+      // 首先判断是否为管理员
+              // isShowSearch
+      let USER_INFO = sessionStorage.getItem("USER_INFO");
+      if (USER_INFO) {
+          let isadmin = JSON.parse(USER_INFO).isadmin;
+          if(isadmin == 0){
+          let arr = [];
+          console.log('12432',this.$store.state.attribute.adminArr);
+          this.$store.state.attribute.menuArr.forEach(element => {
+            this.$store.state.attribute.adminArr.forEach(item => {
+              if(item == element.id){
+                arr.push(element);
+              }
+            });
+          });
+          return  arr;//this.$store.state.attribute.menuArr;
+        }else{
+          console.log('123421342');
+          return  this.$store.state.attribute.menuArr;
+        }
+      }
     },
     isShowAdminMenu() {
       let USER_INFO = sessionStorage.getItem("USER_INFO");

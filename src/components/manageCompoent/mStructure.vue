@@ -20,7 +20,7 @@
                     <!-- <el-input v-show="DataArr" v-model="item.DataTitle" :disabled="true" placeholder="点击输入标题" ></el-input> -->
                     <div style="width:100%;height:50px;border-bottom:1px solid #ccc;border-top:1px solid #ccc;line-height:50px;font-size:18px;font-weight:500;padding-left:10px;">{{item.DataTitle}}</div>
                   </div>
-                  <div class="entrance-item" :class="{'active':acitveTrue==index1}" v-for="(items, index1) in item.DataVal" :key="index1" @click="dataListClick(item.DataTitle,index,index1,items)">
+                  <div class="entrance-item"  v-show='showItem(items.userid,items.productprop.allPeopleArr)' :class="{'active':acitveTrue==index1}" v-for="(items, index1) in item.DataVal" :key="index1" @click="dataListClick(item.DataTitle,index,index1,items)">
                       <div class="cover-image">
                           <img class="entry-icon" v-if="items" :src="items.producticon" alt="" />
                       </div>
@@ -144,6 +144,7 @@ export default {
       let USER_INFO = sessionStorage.getItem("USER_INFO");
       let isadmin = JSON.parse(USER_INFO).isadmin;
       let isUserId = JSON.parse(USER_INFO).Id;
+      // console.log(isUserId);
       if (isadmin === 1) {
         this.$store.state.attribute.objectType = "manage";
         // 赋值到vuex用于属性区总监取值显示
@@ -153,9 +154,15 @@ export default {
         });
       } else {
         let userAuthArr = items1.productprop.allPeopleArr;
+        console.log('获取',userAuthArr);
+        // console.log('1234',userAuthArr);
+        // let adminFlag = null;
+        // if(isUserId == userAuthArr[0].id){
+        //   adminFlag = true;
+        // }
         let adminFlag = userAuthArr.find(
           (value, index, arr) => {
-            return value == isadmin;
+            return value.id == isUserId;
           }
         );
         if (adminFlag) {
@@ -242,6 +249,25 @@ export default {
           this.$showErrorTip("您没有操作权限");
         // }
       }
+    },
+    showItem(adminuid,editUid){
+      let USER_ID = sessionStorage.getItem("USER_ID");
+      if(adminuid == USER_ID){
+        return true;
+      }
+      let USER_INFO = sessionStorage.getItem("USER_INFO");
+      let isadmin = JSON.parse(USER_INFO).isadmin;
+      if (isadmin === 1) {
+        return true;
+      }
+      // let editUidStr =  JSON.stringify(editUid);
+      for(let i = 0;i<editUid.length;i++){
+        if(USER_ID == editUid[i].id ){
+          return true;
+        }
+      }
+      
+      return false;
     }
   },
   mounted() {
@@ -263,7 +289,7 @@ export default {
     },
     btnList() {
       return this.$store.state.attribute.footerList;
-    }
+    },
   }
 };
 </script>

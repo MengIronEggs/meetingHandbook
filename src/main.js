@@ -15,6 +15,19 @@ Vue.prototype.Loading = Loading;
 
 import BaiduMap from 'vue-baidu-map'
 
+ router.afterEach((to, from) => {
+     //debugger;
+    // console.log('1',to.path);
+    // console.log('2',from.path);
+    if (to.path == '/login') {
+        if (localStorage.getItem("reload")!=0) {
+            localStorage.setItem("reload",0)
+            window.location.reload();
+        }else{
+            localStorage.setItem("reload", 1)
+        }
+    }
+ })
 Vue.use(BaiduMap, {
   ak: 'Gphfc3FkrQXVOXSwYnaRcdxR'
 })

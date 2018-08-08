@@ -88,7 +88,7 @@
                         <el-menu-item v-for="(item, i) in this.showDtList" :key="i" :index="(i + 1 + '')" >{{item.departname}}</el-menu-item>
                       </el-menu>
                     </div>
-                      <el-form label-width="80px" style="overflow-x:hidden;">
+                      <el-form label-width="80px">
                         <el-form-item label="公司名称" v-if="this.showDtList.length === 0">
                               <el-input :disabled="true"  v-model="companyname" placeholder="公司名称"></el-input>
                         </el-form-item>
@@ -115,25 +115,21 @@
                             style="width: 100%;text-align:center;">
                             <el-table-column
                               type="index"
-                              header-align='center'
                               width="50">
                             </el-table-column>
                             <el-table-column
-                              property="shortname"
+                              property="shortName"
                               label="公司简称"
-                              header-align='center'
-                              width="80">
+                              width="120">
                             </el-table-column>
                             <el-table-column
                               property="name"
                               label="姓名"
-                              header-align='center'
-                              width="80">
+                              width="120">
                             </el-table-column>
                             <el-table-column
                               property="phone"
                               label="电话"
-                              header-align='center'
                               width="120">
                             </el-table-column>
                            </el-table>
@@ -151,7 +147,7 @@
                                   <el-tag closable style="width:80%;margin-top:5px;"  @close="handleClose(item)" :key="index" v-for="(item,index) in allPeopleArr" type="info">{{item.name}}</el-tag>
                                 </div>
                           </template>
-                          <div style='position:absolute;top:64px;left:1px;width:100%;'>
+                          <div style='position:absolute;top:64px;left:1px;'>
                             <div v-show="tableShow1" style="width:100%;margin-top:20px;margin-left:80px;">
                                 <el-table
                                 ref="singleTable"
@@ -159,26 +155,22 @@
                                 max-height="150"
                                 highlight-current-row
                                 @current-change="handleCurrentChangeOne"
-                                style="text-align:center;">
+                                style="width: 100%;text-align:center;">
                                 <el-table-column
                                   type="index"
-                                  header-align='center'
                                   width="50">
                                 </el-table-column>
                                 <el-table-column
-                                 header-align='center'
-                                  property="shortname"
+                                  property="shortName"
                                   label="公司简称"
-                                  width="80">
+                                  width="120">
                                 </el-table-column>
                                 <el-table-column
-                                  header-align='center'
                                   property="name"
                                   label="姓名"
-                                  width="80">
+                                  width="120">
                                 </el-table-column>
                                 <el-table-column
-                                  header-align='center'
                                   property="phone"
                                   label="电话"
                                   width="120">
@@ -499,13 +491,13 @@ export default {
         // }
         this.$post(`AsDailydepartdictSave`, post_data).then(res => {
           if (res.Code == 200) {
+            this.$showMsgTip(`保存成功`);
             if(flag) {
               this.$router.push({
                 path: "/companyDetials",
                 query: { companyName: this.companyname, dailyclass: this.dailyclass, departname: this.departname,}
               });
             }else{
-              this.$showMsgTip(`保存成功`);
               this.init();
             }
           }
@@ -523,13 +515,13 @@ export default {
         };
         this.$post(`AsDailydictSave`, post_data).then(res => {
           if (res.Code == 200) {
+            this.$showMsgTip(`保存成功`);
             if(flag) {
               this.$router.push({
                 path: "/companyDetials",
                 query: { companyName: this.companyname, dailyclass: this.dailyclass }
               });
             } else{
-              this.$showMsgTip(`保存成功`);
               this.init();
             }
           }
@@ -542,7 +534,7 @@ export default {
       var nowDate = new Date()
       var nowH = nowDate.getHours();
       // console.log(nowH, 23232)
-      if(nowH > 19) {
+      if(nowH > 19 || nowH < 12) {
         const USER_INFO = JSON.parse(sessionStorage.getItem('USER_INFO'))
         if(USER_INFO) {
           // this.isDisabled01  = (USER_INFO.isadmin === 1 || userid === USER_INFO.Id) ? true : false
@@ -556,7 +548,7 @@ export default {
           if(USER_INFO.isadmin === 1 || USER_INFO.Id === userid) {
             return true
           } else {
-            this.$showErrorTip("此时间暂时不能编辑");
+            this.$showErrorTip("已经过了编辑时间，此时间暂时不能编辑");
             return false
           }
         }
@@ -809,7 +801,6 @@ ul li {
     width: 100%;
     height: auto;
     position: relative;
-    overflow-x:hidden;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding-bottom: 20px;

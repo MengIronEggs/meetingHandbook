@@ -8,6 +8,7 @@ export default {
         articleList: [], //文章列表
         // 侧边栏数组数据
         menuArr: [],
+        adminArr:[],//权限数组
         menuBtnIndex: {
             id: 0
         },

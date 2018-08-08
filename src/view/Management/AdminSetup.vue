@@ -34,7 +34,10 @@
             </div>
           </div>
         </div>
-        <div style="width:100%;height:40px;line-height:40px;text-align:center;margin-top:20px;">
+        <div style="width:100%;height:20px;line-height:20px;font-size:14px;text-align:center;color:red;">
+          该模块设置用户手机端的查看权限，如需设置后台权限，请在对应板块设置
+        </div>
+        <div style="width:100%;height:40px;line-height:40px;text-align:center;margin-top:10px;">
             <el-button type="primary" @click="queitClick">取消</el-button>
             <el-button type="primary" @click="resetFn">重置</el-button>
             <el-button type="primary" @click="saveAdminFn">保存</el-button>
@@ -71,7 +74,7 @@ export default {
     // 加载权限
     managementListLoad() {
       // 综合行政权限列表获取
-      this.$get(`GetAsProductlistWhere?cond=needauth&arg=0`).then(res => {
+      this.$get(`GetAsProductlistWhere?cond=needauth&arg=1`).then(res => {
         if (res.Code == 200) {
           let arr = Array.from(
             new Set(

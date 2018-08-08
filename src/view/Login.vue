@@ -235,6 +235,7 @@
                                         remember: this.remember,
                                     });
                                 }
+                                this.$store.state.attribute.objectType = '';
                                 this.$router.replace("/MeetingList");
                             }else{
                                 this.$showErrorTip("账号密码错误!");

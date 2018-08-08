@@ -148,11 +148,7 @@
             logout(){
                 window.sessionStorage.clear();
                 this.$store.state.attribute.isShowExit = false;
-                // window.loca
                 this.$router.push("/login");
-                
-                // window.location.href = 'https://mt.guoanfamily.com/manageMentAdmin/#/login'
-                // window.location.reload();
             },
             changePasswd() {
                 const userid = sessionStorage.getItem('USER_ID')
