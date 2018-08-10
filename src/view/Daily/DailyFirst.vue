@@ -672,7 +672,6 @@ export default {
   },
   computed:{
     table(){
-        console.log('11111111111',this.$store.state.attribute.dailyCacheArr);
         return this.$store.state.attribute.dailyCacheArr;
     },
   }

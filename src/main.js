@@ -28,6 +28,19 @@ import BaiduMap from 'vue-baidu-map'
         }
     }
  })
+ router.beforeEach((to, from, next) => {
+    console.log(to.path,from.path); 
+    if (to.path !== '/companyDetials' && to.path !== '/dailyfirst') {
+        store.state.attribute.dailyCacheArr.tableIndex=0;
+        store.state.attribute.dailyCacheArr.newIndex= 0;
+        store.state.attribute.dailyCacheArr.companyContent= null;
+        store.state.attribute.dailyCacheArr.secondCompanyContent= null;
+        store.state.attribute.dailyCacheArr.secondCompanyArr= [];
+        store.state.attribute.dailyCacheArr.secodCompanyKey= null;
+        store.state.attribute.dailyCacheArr.newId= null;
+    }
+    next();
+ });
 Vue.use(BaiduMap, {
   ak: 'Gphfc3FkrQXVOXSwYnaRcdxR'
 })
