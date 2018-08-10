@@ -34,7 +34,6 @@
             </div>
             <!-- 属性区部分 -->
             <div class="page1">
-                <div style='width:100%;height:500px;overflow-y:scroll;'>
                   <h4>属性区</h4>
                   <div v-if="!formType">
                       <el-card class="box-card">
@@ -196,23 +195,13 @@
                         <el-button style="margin-left:40px;width:30%;margin-top:15px;float:left;" :disabled="isDisabled01" type="primary" size="small" @click= 'exitClcik'>编辑</el-button>
                       </div>
                   </div>
-                </div>
             </div>
         </div>
-        <footer class="footer">
-            <el-button type="success" @click="previewDialogVisible = true">预览</el-button>
-        </footer>
-        <!-- 预览提示框 -->
-        <manageprive :previewDialogVisible="previewDialogVisible" :url="previewUrl" @close="previewDialogVisible = false" />
     </div>
 </template>
 
 <script>
-import manageprive from "../../components/managePrive";
 export default {
-  components:{
-    manageprive
-  },
   data() {
     return {
       // 轮播图集合
@@ -224,7 +213,7 @@ export default {
       },
       //   tab栏数组
       tabArr: [],
-      // tabIndex:0,
+      tabIndex:0,
       active: null,
       //   全部公司数组
       companyListArr: [],
@@ -257,15 +246,11 @@ export default {
       departname: '', // 部门名称
       departItemData: {}, // 选中的具体部门
       isDisable02: true,
-      // newIndex:null,
-      // newItem:null,
-      // 预览变量
-      previewDialogVisible: false,
-      previewUrl:'manageMentwap/#/DailyList',
+      newIndex:null,
+      newItem:null,
     };
   },
   methods: {
-
     //   轮播图获取接口方法
     bannerLoadFn() {
       this.$get(`GetAsProductlistWhere`).then(res => {
@@ -348,9 +333,9 @@ export default {
           //获取列表数组
           this.companyListArr = res.Data;
           // 默认筛选第一栏tab对应公司
-          this.colRowClick(this.table.tableIndex, this.tabArr[this.table.tableIndex]);
-          if(this.table.companyContent !== null){
-            this.CompanyClick(this.table.newIndex,this.table.companyContent);
+          this.colRowClick(this.tabIndex, this.tabArr[this.tabIndex]);
+          if(this.newIndex && this.newItem){
+            this.CompanyClick(this.newIndex,this.newItem);
           }
           
         }
@@ -367,7 +352,7 @@ export default {
     },
     // tab栏的点击事件
     colRowClick(index, item, ev) {
-      this.table.tableIndex = index;
+      this.tabIndex = index;
       this.namePhone = '';
       this.tableShow =  false;
       this.tableShow1 =  false;
@@ -383,8 +368,8 @@ export default {
     },
     // 公司的点击事件
     CompanyClick(index, item) {
-      this.table.newIndex =  index;
-      this.table.companyContent = item;
+      this.newIndex =  index;
+      this.newItem = item;
       this.namePhone = '';
       this.tableShow =  false;
       this.tableShow1 =  false;
@@ -479,7 +464,6 @@ export default {
     },
     // 公司保存的点击事件
     JurisdictionClick(flag) {
-   
       if(!this.showUserName){
         this.$showErrorTip('请输入管理人');
         return false;
@@ -494,6 +478,7 @@ export default {
       }else{
         obj = "";
       }
+      // 判断是部门还是公司
       if(this.showDtList.length !== 0) { // 部门
         // debugger
         let post_data = {
@@ -506,7 +491,6 @@ export default {
           userid: this.userid,
           username: this.showUserName,
         };
-       
         // if(obj === "") {
         //   post_data.departprop = obj
         // } else {
@@ -585,20 +569,16 @@ export default {
         this.isDisable02 = true
       },0)
       var arr = [];
-      if(id !== this.table.newId){
-        this.table.secondCompanyArr = [];
-        this.dtList.forEach(item => {
-          if(item.ddid == id) {
-            this.table.secondCompanyArr.push(item)
-          }
-        })
-      }
-      this.table.newId = id;
+      this.dtList.forEach(item => {
+        if(item.ddid == id) {
+          arr.push(item)
+        }
+      })
       // 判断是否是显示所有的二级部门
       if(JSON.parse(sessionStorage.getItem('USER_INFO')).isadmin != 1) {
         var arr01 = [],
         userid = sessionStorage.getItem('USER_ID');
-        this.table.secondCompanyArr.forEach(item => {
+        arr.forEach(item => {
           var allPeopleArr = JSON.parse(item.departprop).allPeopleArr
           if(item.userid == userid) {
             arr01.push(item)
@@ -612,32 +592,31 @@ export default {
           this.showDtList = arr01;
         })
       }else {
-        this.showDtList = this.table.secondCompanyArr;
+        this.showDtList = arr;
       }
-      if(this.table.secondCompanyArr.length !== 0) {
+      
+      if(arr.length !== 0) {
         // this.activeIndex = '1'
         this.$nextTick(() => {
           this.activeIndex = '1'
         })
-        this.departname = this.table.secondCompanyArr[0].departname
-        this.departItemData = this.table.secondCompanyArr[0]
-        this.departDataEcho(this.table.secondCompanyArr[0]);
+        this.departname = arr[0].departname
+        this.departItemData = arr[0]
+        this.departDataEcho(arr[0]);
       }
-     
       
     },
     // 选择具体部门
     handleSelect(key, keyPath) {
-      this.table.secodCompanyKey = key;
-      var item = this.showDtList[this.table.secodCompanyKey-1];
+      var item = this.showDtList[key-1]
       this.departItemData = item;
       this.departname = item.departname;
       this.departDataEcho(item);
+     
     },
     // 部门数据回显
     departDataEcho(item) {
       this.showUserName = item.username;
-      this.table.secondCompanyContent = item;
       this.userid = item.userid;
       //JSON.parse(item.departprop).allPeopleArr
       if (item.departprop && item.departprop !== '""' && item.departprop.indexOf("{") == 0 && JSON.parse(item.departprop).allPeopleArr) {
@@ -647,34 +626,28 @@ export default {
       }
     },
     init() { // 入口
-      this.tabListLoadFn();  
+      this.tabListLoadFn();
       this.departmentLoadInfo();
     }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   if(to.path =='/companyDetials'){
-  //     this.$route.meta.keepAlive = true;  // B 跳转到 A 时，让 A 缓存，即不刷新
-  //   }
-  //   // if(to.path == '/login') {
-  //   //   console.log(this.$route, 100)
-  //   //    this.$route.meta.keepAlive = false;
-  //   // }
-  //   // console.log(11111,this.$route.meta.keepAlive)
-  //   next();
-  // },
+  beforeRouteLeave(to, from, next) {
+    if(to.path =='/companyDetials'){
+      
+      this.$route.meta.keepAlive = true;  // B 跳转到 A 时，让 A 缓存，即不刷新
+      console.log('this.$route.meta.keepAlive',this.$route.meta.keepAlive);
+      
+    }
+    // if(to.path == '/login') {
+    //   console.log(this.$route, 100)
+    //    this.$route.meta.keepAlive = false;
+    // }
+    // console.log(11111,this.$route.meta.keepAlive)
+    next();
+  },
 
   mounted() {
-    
-  },
-  created() {
     this.bannerLoadFn();
     this.init()
-  },
-  computed:{
-    table(){
-        console.log('11111111111',this.$store.state.attribute.dailyCacheArr);
-        return this.$store.state.attribute.dailyCacheArr;
-    },
   }
 };
 </script>
@@ -747,7 +720,7 @@ ul li {
     justify-content: start;
     border: 1px solid #333;
     width: 375px;
-    height: 450px;
+    height: 500px;
     overflow-y: auto;
     margin: 0 auto;
     position: relative;
@@ -813,7 +786,7 @@ ul li {
   flex-grow: 1;
   padding-left: 20px;
   max-width: 600px;
-  height: 450px;
+  // height: 500px;
   border:1px solid #000;
   overflow-y: scroll;
   width: 100%;
@@ -881,12 +854,4 @@ ul li {
   text-align: right;
   padding-right: 15px;
 }
-.footer {
-  // padding: 10px 0;
-  width: 100%;
-  text-align: center;
-  position:relative;
-  bottom:40px;
-}
-
 </style>

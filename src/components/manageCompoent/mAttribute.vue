@@ -859,7 +859,7 @@ export default {
   width: 100%;
   min-width: 350px;
   text-align: center;
-  height: 500px;
+  height: 450px;
   overflow-y: auto;
   border:1px solid #000;
   padding-bottom: 10px;

@@ -212,8 +212,8 @@
 
         methods: {
             submit() {
-                console.log(this.$root.isLogin, 89777)
                 this.$refs.form.validate((valid) => {
+
                         this.$post(`login`, {
                             name: this.form.username,
                             password: this.form.password

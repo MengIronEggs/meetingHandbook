@@ -4,23 +4,17 @@
             <mStructure/>
             <mAttribute @refreshLis="managementListLoad"/>
         </div>
-        <footer class="footer">
-            <el-button type="success" @click="previewDialogVisible = true">预览</el-button>
-        </footer>
-        <!-- 预览提示框 -->
-        <manageprive :previewDialogVisible="previewDialogVisible" :url="previewUrl" @close="previewDialogVisible = false" />
     </div>
 </template>
 
 <script>
 import mStructure from "../../components/manageCompoent/mStructure";
 import mAttribute from "../../components/manageCompoent/mAttribute";
-import manageprive from "../../components/managePrive";
+// import preview from "../../components/Preview";
 export default {
   components: {
     mStructure,
-    mAttribute,
-    manageprive
+    mAttribute
     // preview
   },
   data() {
@@ -30,7 +24,9 @@ export default {
       },
       mid: this.$route.query.mid,
       previewDialogVisible: false,
-      previewUrl:"manageMentwap/#/",
+      previewUrl: `#/?id=${this.$route.query.mid}&uid=${this.$getSession(
+        this.KEYS.USER_ID
+      )}`
     };
   },
   methods: {
@@ -224,7 +220,7 @@ export default {
 
 <style scoped>
 .container {
-  /* margin-top: 20px; */
+  margin-top: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -233,9 +229,8 @@ export default {
   overflow-y: hidden;
 }
 .footer {
+  padding: 10px 0;
   width: 100%;
   text-align: center;
-  position:relative;
-  bottom:10px;
 }
 </style>

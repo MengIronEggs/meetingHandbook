@@ -51,8 +51,8 @@ import GaPlugin from './script/GaPlugin'
 Vue.use(new GaPlugin());
 
 // router.beforeEach((to, from, next) => {
-  /* 路由发生变化修改页面title */
-//   debugger
+//   /* 路由发生变化修改页面title */
+// //   debugger
 //     if(to.path =='/dailyfirst' && from.path != '/companyDetials'){
 //         // if(form.path != '/companyDetials') {
 //             to.meta.keepAlive = false;  // B 跳转到 A 时，让 A 缓存，即不刷新

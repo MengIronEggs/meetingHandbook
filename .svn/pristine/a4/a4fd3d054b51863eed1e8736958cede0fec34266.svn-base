@@ -72,16 +72,6 @@ export default {
         isState: false,
         // 权限控制数组
         admindArr: [],
-        // 日报缓存数据数组
-        dailyCacheArr:{
-           tableIndex:0,
-           newIndex:0,
-           companyContent:null,
-           secondCompanyContent:null,
-           secondCompanyArr:[],
-           secodCompanyKey:null,
-           newId:null,
-        },
     },
     mutations: {
         banner(state, {

@@ -15,19 +15,6 @@ Vue.prototype.Loading = Loading;
 
 import BaiduMap from 'vue-baidu-map'
 
- router.afterEach((to, from) => {
-     //debugger;
-    // console.log('1',to.path);
-    // console.log('2',from.path);
-    if (to.path == '/login') {
-        if (localStorage.getItem("reload")!=0) {
-            localStorage.setItem("reload",0)
-            window.location.reload();
-        }else{
-            localStorage.setItem("reload", 1)
-        }
-    }
- })
 Vue.use(BaiduMap, {
   ak: 'Gphfc3FkrQXVOXSwYnaRcdxR'
 })
@@ -50,17 +37,17 @@ import GaPlugin from './script/GaPlugin'
 
 Vue.use(new GaPlugin());
 
-// router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   /* 路由发生变化修改页面title */
 //   debugger
-//     if(to.path =='/dailyfirst' && from.path != '/companyDetials'){
-//         // if(form.path != '/companyDetials') {
-//             to.meta.keepAlive = false;  // B 跳转到 A 时，让 A 缓存，即不刷新
-//         // }
+    if(to.path =='/dailyfirst' && from.path != '/companyDetials'){
+        // if(form.path != '/companyDetials') {
+            to.meta.keepAlive = false;  // B 跳转到 A 时，让 A 缓存，即不刷新
+        // }
         
-//     }
-//     next()
-// })
+    }
+    next()
+})
 //判断是否是生产环境，生产环境下，将console方法重写
 if (process.env.NODE_ENV === 'production') {
     window.console.log = () => {};

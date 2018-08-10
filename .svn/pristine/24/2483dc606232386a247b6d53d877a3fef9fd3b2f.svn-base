@@ -301,7 +301,7 @@ export default {
   padding: 0 10px;
 }
 .device {
-  height: 450px;
+  height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: start;
