@@ -29,7 +29,6 @@ import BaiduMap from 'vue-baidu-map'
     }
  })
  router.beforeEach((to, from, next) => {
-    console.log(to.path,from.path); 
     if (to.path !== '/companyDetials' && to.path !== '/dailyfirst') {
         store.state.attribute.dailyCacheArr.tableIndex=0;
         store.state.attribute.dailyCacheArr.newIndex= 0;

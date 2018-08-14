@@ -127,6 +127,7 @@
 
             iframeGoBack(){
                 try{
+                   
                     if(!frames[0].location.hash.includes(this.url)){
                         history.go(-1);
                     }

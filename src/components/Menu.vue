@@ -9,24 +9,6 @@
                 :active-text-color="activeBigColor"
                 :router="true"
                 >
-                <!-- <router-link to="/main"> -->
-                    
-                <!-- </router-link> -->
-                  <!-- <router-link to="/ComprehensiveSearch"> -->
-                    
-                <!-- </router-link> -->
-                <!-- <el-submenu index="2" @click.native="titleClick">
-                    <template slot="title" >
-                        <i class="el-icon-setting" :class="{'oSpan': activeColor}"></i>
-                        <span :class="{'oSpan': activeColor}">行政综合</span>
-                    </template> -->
-                    <!-- <el-menu-item-group>
-                        <el-menu-item @click.native.stop="listClick(item)" :key="index1" :index="item.productname" v-for="(item,index1) in menuArr" >
-                          <img style="width:20px;margin-left:5px;" :src="item.producticon" alt="">
-                          <span>{{item.productname}}</span>
-                        </el-menu-item>
-                    </el-menu-item-group> -->
-                <!-- </el-submenu> -->
                 <el-menu-item @click.native="meettingClick" index="1">
                     <i class="el-icon-menu"></i>
                     <span slot="title">会议手册</span>

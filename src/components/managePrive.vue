@@ -51,7 +51,7 @@
     .qrcode{
         position: absolute;
         top: 200px;
-        right: -250px;
+        right: -325px;
         text-align: center;
     }
 </style>
@@ -66,11 +66,11 @@
             <div class="iphone-box" :style="{backgroundImage: `url(${iphoneImage})`}">
 
                 <nav class="navigation">
-                    <i class="back-btn el-icon-arrow-left" @click="iframeGoBack"></i>
-                    预览
+                    <i class="back-btn el-icon-arrow-left" @click="iframeGoBack1"></i>
+                   {{title}}
                 </nav>
 
-                <iframe id="preview" v-if="preview" class="webview" :src="`https://mt.guoanfamily.com/${url}`" scrolling="no"
+                <iframe ref="previewIframe" v-if="preview" class="webview" :src="`https://mt.guoanfamily.com/${url}`" scrolling="no"
                         frameborder="0" width="262px" height="424px"></iframe>
 
                 <div class="qrcode">
@@ -82,7 +82,16 @@
                         :closable="false"
                     >
                     </el-alert>
+                    <label>访问地址: </label>
+                    <el-input readonly :value="`https://mt.guoanfamily.com/${reallyUrl}`">
+                        <template slot="append">
+                            <i class="el-icon-document clip-btn"
+                            :data-clipboard-text="`https://mt.guoanfamily.com/${reallyUrl}`"></i>
+                        </template>
+                    </el-input>
                 </div>
+                
+                
             </div>
 
         </el-dialog>
@@ -91,7 +100,7 @@
 
 <script>
     import iphoneImage from '../../static/Main/iphone.png';
-
+    import Clipboard from 'clipboard';
     export default {
 
         props: {
@@ -108,6 +117,7 @@
             return {
                 iphoneImage: iphoneImage,
                 preview: false,
+                title:'',
             }
         },
 
@@ -116,7 +126,15 @@
         },
 
         mounted() {
-
+            const clipboard2 = new Clipboard('.clip-btn');
+            clipboard2.on('success', (e) => {
+                this.$showMsgTip("复制成功")
+            });
+            if(this.url == 'manageMentwap/#/DailyList'){
+                this.title = '日报管理';
+            }else{
+                this.title ='行政综合'
+            }
         },
 
         methods: {
@@ -124,16 +142,25 @@
                 this.$emit(`close`);
                 done();
             },
-
-            iframeGoBack(){
-                try{
-                    if(!frames[0].location.hash.includes(this.url)){
-                        history.go(-1);
-                    }
-                }catch (e) {
+            iframeGoBack1(){
+                // var iframeWindow = document.getElementById('preview').contentWindow;
+                var iframeWindow = this.$refs.previewIframe.contentWindow;
+                var currentHref = iframeWindow.document.location.href;
+                // alert('123' +  '   ' + currentHref)
+                // if(currentHref.includes('manageMentwap/#/DailyList') || currentHref.includes('manageMentwap/#/')){
+                //     this.$emit('refreshList');
+                // }else{
+                //     history.go(-1);
+                // }
+                if(
+                   currentHref =='https://mt.guoanfamily.com/manageMentwap/#/DailyList' ||
+                   currentHref =='https://mt.guoanfamily.com/manageMentwap/#/' || 
+                   currentHref == 'https://mt.guoanfamily.com/manageMentwap/#/Login' 
+                ){
+                    this.$emit('refreshList');
+                }else{
                     history.go(-1);
                 }
-
             }
         },
 

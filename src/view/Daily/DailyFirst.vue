@@ -203,7 +203,7 @@
             <el-button type="success" @click="previewDialogVisible = true">预览</el-button>
         </footer>
         <!-- 预览提示框 -->
-        <manageprive :previewDialogVisible="previewDialogVisible" :url="previewUrl" @close="previewDialogVisible = false" />
+        <manageprive :previewDialogVisible="previewDialogVisible" ref='onRefresList' @refreshList="onRefresList" :url="previewUrl" @close="previewDialogVisible = false" />
     </div>
 </template>
 
@@ -265,6 +265,10 @@ export default {
     };
   },
   methods: {
+    // 关闭方法
+    onRefresList(){
+     this.previewDialogVisible = false;
+    },
 
     //   轮播图获取接口方法
     bannerLoadFn() {
@@ -617,11 +621,17 @@ export default {
       if(this.table.secondCompanyArr.length !== 0) {
         // this.activeIndex = '1'
         this.$nextTick(() => {
-          this.activeIndex = '1'
+          // console.log(this.table.secodCompanyKey);
+          if(this.table.secodCompanyKey == null){
+            this.activeIndex = '1';
+          }else{
+            this.activeIndex = this.table.secodCompanyKey;
+          }
+          
         })
-        this.departname = this.table.secondCompanyArr[0].departname
-        this.departItemData = this.table.secondCompanyArr[0]
-        this.departDataEcho(this.table.secondCompanyArr[0]);
+        this.departname = this.table.secondCompanyArr[0].departname;
+        this.departItemData = this.table.secondCompanyArr[0];
+        this.departDataEcho(this.table.secondCompanyArr[this.table.secodCompanyKey-1]);
       }
      
       
@@ -885,7 +895,7 @@ ul li {
   width: 100%;
   text-align: center;
   position:relative;
-  bottom:40px;
+  bottom:20px;
 }
 
 </style>
