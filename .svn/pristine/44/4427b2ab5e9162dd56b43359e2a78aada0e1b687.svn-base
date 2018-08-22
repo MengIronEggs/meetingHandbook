@@ -10,7 +10,7 @@ import VueQrcode from '@xkeshi/vue-qrcode'
 import { Loading } from 'element-ui';
 import '../src/script/editor';
 import '../src/script/spark-md5.min';
-// import "./common/public.css";
+import "./common/public.css";
 Vue.prototype.Loading = Loading;
 
 import BaiduMap from 'vue-baidu-map'
