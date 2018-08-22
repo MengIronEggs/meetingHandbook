@@ -301,7 +301,7 @@ export default {
   padding: 0 10px;
 }
 .device {
-  height: 450px;
+  // height: 450px;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -309,7 +309,10 @@ export default {
   // width: 375px;
   width: 375px;
   margin: 0 auto;
-  position: relative;
+  position:absolute;
+  left:350px;
+  bottom: 80px;
+  top:40px;
 }
 
 .carousel-image {

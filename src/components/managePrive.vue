@@ -54,6 +54,9 @@
         right: -325px;
         text-align: center;
     }
+    .shou{
+        cursor:pointer;
+    }
 </style>
 
 <template>
@@ -85,7 +88,7 @@
                     <label>访问地址: </label>
                     <el-input readonly :value="`https://mt.guoanfamily.com/${reallyUrl}`">
                         <template slot="append">
-                            <i class="el-icon-document clip-btn"
+                            <i class="el-icon-document clip-btn shou"
                             :data-clipboard-text="`https://mt.guoanfamily.com/${reallyUrl}`"></i>
                         </template>
                     </el-input>

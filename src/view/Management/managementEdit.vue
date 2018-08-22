@@ -231,11 +231,12 @@ export default {
   padding: 20px;
   overflow-x: hidden;
   overflow-y: hidden;
+  height: 100%;
 }
 .footer {
   width: 100%;
   text-align: center;
-  position:relative;
+  position:fixed;
   bottom:10px;
 }
 </style>

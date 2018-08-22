@@ -389,6 +389,7 @@ export default {
     CompanyClick(index, item) {
       this.table.newIndex =  index;
       this.table.companyContent = item;
+      this.table.secodCompanyKey = null;
       this.namePhone = '';
       this.tableShow =  false;
       this.tableShow1 =  false;
@@ -511,6 +512,8 @@ export default {
           username: this.showUserName,
         };
        
+        // console.log('嘻嘻',post_data);
+        // return false;
         // if(obj === "") {
         //   post_data.departprop = obj
         // } else {
@@ -540,6 +543,8 @@ export default {
           userid: this.userid,
           username: this.showUserName
         };
+        // console.log('哈哈',post_data);
+        // return false;
         this.$post(`AsDailydictSave`, post_data).then(res => {
           if (res.Code == 200) {
             if(flag) {
@@ -614,6 +619,7 @@ export default {
             })
           }
           this.showDtList = arr01;
+          // console.log('12340',this.table.secondCompanyArr);
         })
       }else {
         this.showDtList = this.table.secondCompanyArr;
@@ -621,7 +627,6 @@ export default {
       if(this.table.secondCompanyArr.length !== 0) {
         // this.activeIndex = '1'
         this.$nextTick(() => {
-          // console.log(this.table.secodCompanyKey);
           if(this.table.secodCompanyKey == null){
             this.activeIndex = '1';
           }else{
@@ -631,14 +636,28 @@ export default {
         })
         this.departname = this.table.secondCompanyArr[0].departname;
         this.departItemData = this.table.secondCompanyArr[0];
-        this.departDataEcho(this.table.secondCompanyArr[this.table.secodCompanyKey-1]);
+        // console.log('124',this.table.secondCompanyArr[this.table.secodCompanyKey-1]);
+        // console.log('124',this.table.secodCompanyKey);
+        if(this.table.secodCompanyKey){
+          // console.log('1234',this.table.secondCompanyArr[this.table.secodCompanyKey-1]);
+          // this.departDataEcho(this.table.secondCompanyArr[this.table.secodCompanyKey-1]);
+          let newTabIndex  = this.table.secodCompanyKey.toString();
+          this.handleSelect(newTabIndex,[newTabIndex]);
+        }
+        else{
+          this.handleSelect("1",["1"])
+        }
+        
       }
      
       
     },
     // 选择具体部门
     handleSelect(key, keyPath) {
+      // console.log(1234,key,keyPath);
+      
       this.table.secodCompanyKey = key;
+      
       var item = this.showDtList[this.table.secodCompanyKey-1];
       this.departItemData = item;
       this.departname = item.departname;
@@ -646,6 +665,7 @@ export default {
     },
     // 部门数据回显
     departDataEcho(item) {
+     
       this.showUserName = item.username;
       this.table.secondCompanyContent = item;
       this.userid = item.userid;
@@ -756,10 +776,13 @@ ul li {
     justify-content: start;
     border: 1px solid #333;
     width: 375px;
-    height: 450px;
+    // height: 450px;
     overflow-y: auto;
     margin: 0 auto;
-    position: relative;
+    position: absolute;
+    top:40px;
+    left:300px;
+    bottom:80px;
     .carousel-image {
       width: 100%;
     }
@@ -821,8 +844,12 @@ ul li {
   flex-direction: column;
   flex-grow: 1;
   padding-left: 20px;
-  max-width: 600px;
-  height: 450px;
+  max-width: 480px;
+  // height: 450px;
+  position: absolute;
+  left:720px;
+  top:40px;
+  bottom:80px;
   border:1px solid #000;
   overflow-y: scroll;
   width: 100%;

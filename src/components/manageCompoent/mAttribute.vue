@@ -859,10 +859,14 @@ export default {
   width: 100%;
   min-width: 350px;
   text-align: center;
-  height: 450px;
+  /* height: 450px; */
   overflow-y: auto;
   border:1px solid #000;
   padding-bottom: 10px;
+  position: absolute;
+  left:750px;
+  top:40px;
+  bottom:80px;
 }
 .box-card {
   margin: 10px;
